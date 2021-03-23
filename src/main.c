@@ -71,7 +71,7 @@ int main()
 		
 		PAL_setColors(0,paleta64,64);
 		
-		VDP_drawText("Nuevo",11,19);
+		VDP_drawText("Nuevo??",11,19);
 		
 		SYS_enableInts();
 		
