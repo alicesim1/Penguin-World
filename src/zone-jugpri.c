@@ -5,7 +5,7 @@
 #include "../inc/zone-jugpri.h"
 
 
-#include "zona1.h"//res ficheros
+#include "../res/zona1.h"//res ficheros
 const MapDefinition* const zona1[] = {&z1h1};
 Map* bgb; //PLANO B (Fondo del nivel Prioridad Baja(*Puertas Altas...))
 

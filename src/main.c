@@ -6,8 +6,8 @@
 #define Version "0.05"
 
 //res ficheros
-#include "logos.h"
-#include "titulo.h"
+#include "../res/logos.h"
+#include "../res/titulo.h"
 //----------------------------
 #include "../inc/zone-jugpri.h"
 
