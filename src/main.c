@@ -3,42 +3,33 @@
 *      @Title:  PENGUIN WORLD
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
+#define Version "0.05"
 
-/////////DECLARAMOS LAS LIBRERIAS Y RECURSOS
-
-//----------------------------------------
-#include "basicos.h"
-
+//res ficheros
 #include "logos.h"
 #include "titulo.h"
+//----------------------------
+#include "../inc/zone-jugpri.h"
 
 //-----------------------------------------
-#define Version "0.05"
-//------------------------
-char char_salida[16]; //Cadena de 16 caracteres(para rellenar o vaciar) No se debe superar!
 
 //-----------------------------------------------------
 u16 paleta64[64];
 
 //para llevar la cuenta de tiles en VRAM
 //reserva las primeras 16 posiciones de la VRAM, de la 0 a la 15 (ind = 16)
-u16 ind;
 
 
 //Definiciones de las funciones---------------------------------------------------
-void SEGALOGO();
-void SGDKlogo();
-void ALICESIM1();
-void TITUTLO();
-u8 randomInRangeU8(u8,u8);
-void VDP_drawInt(s32,u8,u8,u8);
+static void SEGALOGO();
+static void SGDKlogo();
+static void ALICESIM1();
+static void TITUTLO();
+//----------------------------------------
 
-//Manejador de entrada
-u16 BUTTONS[9];
-void inputHandler(u16,u16,u16);
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
-int main()
+void main()
 {	
 	//KLog("INICIO!");
 	/*desactiva el acceso al VDP
@@ -48,8 +39,7 @@ int main()
 	SYS_disableInts();
 	
 	VDP_loadFont(&font1,DMA);
-
-	VDP_setScrollingMode(HSCROLL_LINE,VSCROLL_PLANE);//titulo
+	
 	//--------------------------------------
 	JOY_setEventHandler(&inputHandler);
 	
@@ -64,32 +54,16 @@ int main()
 	if(BUTTONS[0]==0) SGDKlogo();
 	if(BUTTONS[0]==0) ALICESIM1();
 	
-    while(1) //LOOP BASICO(NUNCA SE SALE!)
-    {	
-		
-		TITUTLO();
-		
-		PAL_setColors(0,paleta64,64);
-		
-		VDP_drawText("Nuevo??",11,19);
-		
-		SYS_enableInts();
-		
-		while(!BUTTONS[5]) //loop 
-		{
-			VDP_showFPS(TRUE);//1x1
-			VDP_showCPULoad();//1x2
-			SYS_doVBlankProcess(); // Renderizamos la pantalla
-		}
-		
-		SYS_hardReset();//reiniciamos todo!
-		//SYS_die("Mensaje de error! Reinicia la MD/GS");
-    }
-    return 0;
+	TITUTLO();
+	
+	ZoneMap();
+	
 }
 
 
-void SEGALOGO(){
+
+
+static void SEGALOGO(){
 	
 	VDP_clearPlane(BG_B,TRUE);
 	u16 paleta16or[16];
@@ -116,7 +90,7 @@ void SEGALOGO(){
 
 
 
-void SGDKlogo(){
+static void SGDKlogo(){
 
 	VDP_clearPlane(BG_B,TRUE);
 	u16 paleta16or[16];
@@ -137,7 +111,7 @@ void SGDKlogo(){
 
 
 
-void ALICESIM1(){
+static void ALICESIM1(){
 	
 	VDP_clearPlane(BG_B,TRUE);
 	u16 colblank[1]={RGB24_TO_VDPCOLOR(0xFFFFFF)};
@@ -172,7 +146,7 @@ void ALICESIM1(){
 	SYS_disableInts();
 }
 
-void TITUTLO(){
+static void TITUTLO(){
 	
 	VDP_clearPlane(BG_B,TRUE);
 	
@@ -184,6 +158,7 @@ void TITUTLO(){
 	/*u16 paleta32[32];
 	PAL_getColors(16,paleta32,32);*/
 	
+	VDP_setScrollingMode(HSCROLL_LINE,VSCROLL_PLANE);//titulo
 	
 	memcpy(&paleta64[0],titulo.palette->data, 16 * 2);
 	memcpy(&paleta64[16],fondogr.palette->data, 16 * 2);
@@ -322,38 +297,7 @@ void TITUTLO(){
 	VDP_clearPlane(BG_A,TRUE);VDP_clearPlane(BG_B,TRUE);
 	
 	VDP_setTextPalette(PAL0);
-}
-
-
-//https://github.com/diegomtassis/yamd-library/blob/master/src/fwk/commons.c#L40
-u8 randomInRangeU8(u8 lower, u8 higher) {
-	return lower + random() % (higher + 1 - lower);
-}
-
-void VDP_drawInt(s32 valor,u8 ceros,u8 x, u8 y){
-	intToStr(valor,char_salida,ceros); //MIN -500.000.000 - MAX 500.000.000
-	VDP_drawText(char_salida,x,y);
-}
-
-
-/**
- * Manejador de entrada
- * joy-> Indica el mando que ha activado la entrada
- * state -> Indica el estado del mando (boton activo)
- * changed -> indica si ha cambiado (pulsado o solatado)
- * */
-void inputHandler(u16 joy, u16 state, u16 changed){
-    BUTTONS[0]=changed;
+	VDP_setScrollingMode(HSCROLL_PLANE,VSCROLL_PLANE);//titulo
 	
-	BUTTONS[1]=changed & BUTTON_UP;
-	BUTTONS[2]=changed & BUTTON_DOWN;
-	BUTTONS[3]=changed & BUTTON_LEFT;
-	BUTTONS[4]=changed & BUTTON_RIGHT;
-	
-	BUTTONS[5]=changed & BUTTON_A;
-	BUTTONS[6]=changed & BUTTON_B;
-	BUTTONS[7]=changed & BUTTON_C;
-	BUTTONS[8]=changed & BUTTON_START;
-	
+	SYS_doVBlankProcess();
 }
-
