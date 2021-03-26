@@ -34,17 +34,16 @@ void main()
 	Desactiva temporalmente cualquier tipo de interrupción (Vertical, Horizontal and External) al
 	VDP, de esa forma podemos 'toquetearlo' a placer sin que una interrupción pare lo que estamos
 	haciendo y deje a mitad el trabajo*/
-	SYS_disableInts();
 	
 	VDP_loadFont(&font1,DMA);
 	
 	//--------------------------------------
-	JOY_setEventHandler(&inputHandler);
 	
 	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6,TRUE,TRUE);
-	SYS_enableInts();
+	
+	JOY_setEventHandler(&inputHandler);
+	
 	JOY_waitPressBtnTime(900);
-	SYS_disableInts();
 	
 	XGM_startPlay(M_titulo);
 	
@@ -69,7 +68,6 @@ static void SEGALOGO(){
 	VDP_setPaletteColors(0,palette_black,16);
 	
 	VDP_drawImageEx(BG_B,&logosega,1,20-6,14-2,FALSE,TRUE);
-	SYS_enableInts();
 	
 	for(u8 i=1;i<13;i++){
 		PAL_fadeIn(i,i,&paleta16or[i],3,TRUE);
@@ -82,8 +80,7 @@ static void SEGALOGO(){
 	else VDP_setPalette(PAL0,logosega.palette->data);
 	
 	PAL_fadeOutAll(20,FALSE);
-	
-	SYS_disableInts();
+
 }
 
 
@@ -96,15 +93,12 @@ static void SGDKlogo(){
 	VDP_setPaletteColors(0,palette_black,16);
 	
 	VDP_drawImageEx(BG_B,&sgdklogo,1,20-4,14-4,FALSE,TRUE);
-	SYS_enableInts();
 	PAL_fadeIn(0,15,&paleta16or[0],10,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
 	else VDP_setPalette(PAL0,sgdklogo.palette->data);
 	
 	PAL_fadeOutAll(20,FALSE);
-	SYS_disableInts();
-	
 }
 
 
@@ -119,7 +113,6 @@ static void ALICESIM1(){
 	VDP_setPaletteColors(0,palette_black,16); 
 	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-3,FALSE,TRUE);
 	//Volvemos a activar las interrupciones del VDP
-	SYS_enableInts();
 	
 	u8 i;
 	for(i=1;i<16;i+=2){
@@ -141,7 +134,6 @@ static void ALICESIM1(){
 	
 	PAL_fadeOutAll(20,FALSE);
 	
-	SYS_disableInts();
 }
 
 static void TITUTLO(){
@@ -196,9 +188,7 @@ static void TITUTLO(){
 	u8 num_lin;
 	for(num_lin=9;num_lin<120;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,CPU);
 	
-	//Volvemos a activar las interrupciones del VDP
-	SYS_enableInts();
-	
+
 	//FACE IN
 	/* PAL_fadeIn(from_color, to_color, pal_final, num_frames, asyn)
 	Esta función realiza un fade-in de la paleta actual a la paleta 'pal_final',
@@ -289,14 +279,15 @@ static void TITUTLO(){
 	}while(!ok);
 	
 	PAL_fadeOutAll(120,FALSE);
-	XGM_stopPlay();
-	SYS_disableInts();
 	
 	VDP_clearPlane(BG_A,TRUE);VDP_clearPlane(BG_B,TRUE);
 	
 	VDP_setTextPalette(PAL0);
 	VDP_setScrollingMode(HSCROLL_PLANE,VSCROLL_PLANE);//titulo
 	
+	XGM_stopPlay();
+	
+	SYS_doVBlankProcess();
 	SYS_doVBlankProcess();
 }
 
