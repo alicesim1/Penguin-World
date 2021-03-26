@@ -1,20 +1,18 @@
-#include "genesis.h"//OBLIGATORIO! [[SGDK]]
+#include "genesis.h"//[[SGDK]]
 /********************************************************************************
 *      @Title:  PENGUIN WORLD
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
-#include "../inc/zone-jugpri.h"
+#include "../inc/global.h"
 
-
+//---------------Zona 1---------------------------------
 #include "../res/zona1.h"//res ficheros
 const MapDefinition* const zona1[] = {&z1h1};
 Map* bgb; //PLANO B (Fondo del nivel Prioridad Baja(*Puertas Altas...))
 
 const MapDefinition* const zona1b[] = {&z1h1b};
 Map* bga; //PLANO A (Capa superior Prioridad Alta)
-
-
-u8 habit=0;
+//-----------------------------------------------------------
 
 bool move_scroll;
 u16 posX,posY;
@@ -31,15 +29,13 @@ const u8 STARTYT=0;
 //---------------------------------------------------------
 // DATA
 //---------------------------------------------------------
-
-u8 mapindex_tiles;//indice de inicio de los tiles del MAP
-
 u16 paleta32[32];
 
 u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
 
 //------------------------------------------------------------------------------------------
 bool SPR_ACT;
+
 Sprite* penguinsp; //atributo tipo Sprite
 const u8 VELPING=2;
 s16 PX,PY;
@@ -50,7 +46,6 @@ bool JUGmueve;
 bool jugpri,jugpricpy;
 
 static void jug2diso();
-static void jugdir4();
 static void jugpenguin();
 
 //------------------------------------------------------------------------------------------
@@ -78,11 +73,10 @@ static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , 
 void ZoneMap(){
 	
 	//--------------------------------------
-	VDP_setPalette(0,palette_black);VDP_setPalette(1,palette_black);
 	VDP_setPalette(2,palette_green);VDP_setPalette(3,palette_blue);
 	
 	VDP_setWindowVPos(1,26);// 27max vertical Windows
-	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window
+	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	
 	
 	PX=32*1;PY=32*2;
@@ -97,22 +91,33 @@ void ZoneMap(){
 	
 	SPR_init();
 	
+	
 	penguinsp=SPR_addSprite(&penguin,160-12,112-26,TILE_ATTR(1,jugpri,0,0));
+	
 	
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//up+<<
 	//pdirc=pdircm=3;//down+<<
-	jugdir4();
+	
+	switch(pdircm){
+		case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}
+		break;
+		case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}
+		break;
+		case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
+		break;
+		case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
+	}
+	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
 	jug2diso();
 	
 	loadzona();pintarAB();
 	
-	//SPR_update();SYS_doVBlankProcess();//fix (60Hrz) pintarAB Se necesita ciclos de procesamiento para pintar Sprites
+	SPR_update();SYS_doVBlankProcess();//fix (60Hrz) pintarAB Se necesita ciclos de procesamiento para pintar Sprites
 	SPR_update();
-	//SYS_doVBlankProcess();
 	
 	SPR_ACT=FALSE;
 	
@@ -129,19 +134,11 @@ void ZoneMap(){
 		VDP_drawInt(SYS_getCPULoad(),2,38,27);
 		
 		
-		
 		if(!gat){
 			if(BUTTONS[8]){ gat=TRUE;
 				jugcontrol++;if(jugcontrol==4)jugcontrol=0;
 				VDP_drawInt(jugcontrol,0,0,26);
 			}
-			
-			/*if(BUTTONS[6] && !gat){ gat=TRUE;
-				VDP_setTileMapXY(BG_B,TILE_ATTR_FULL(2,1,0,0,1472),36,12);
-			}
-			if(BUTTONS[7] && !gat){ gat=TRUE;
-				VDP_setTileMapXY(BG_A,TILE_ATTR_FULL(1,1,0,0,1025),36,20);
-			}*/
 		
 		}else if(!BUTTONS[0]) gat=FALSE;
 		
@@ -183,8 +180,8 @@ static void pintarAB(){
 	VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
 	MAP_scrollTo(bgb,posX,posY);MAP_scrollTo(bga,posX,posY);
 	move_scroll=FALSE;
-	u8 i;
 	
+	u8 i;
 	//-----------------------------------------------------------
 	for(i=0;i<3;i++){
 		SPR_setPosition(object2D[i].sprt,object2D[i].x-posX,object2D[i].y-posY);
@@ -216,19 +213,19 @@ static void pintarAB(){
 
 static void loadzona(){
 	
-	memcpy(&paleta32[0],zona1[habit]->palette->data,16*2);
+	memcpy(&paleta32[0],zona1[0]->palette->data,16*2);
 	paleta32[0]=0;//colro de fondo 100% negro
 	paleta32[15]=RGB24_TO_VDPCOLOR(0xFFFFFF);//color 15 (texo...) Blanco
-	mapindex_tiles=ind=0;
 	
-	VDP_loadTileSet(zona1[habit]->tileset,mapindex_tiles,DMA);
-	bgb=MAP_create(zona1[habit],BG_B,mapindex_tiles);
-	ind+=zona1[habit]->tileset->numTile;
+	u8 ind=0;
+	VDP_loadTileSet(zona1[0]->tileset,ind,DMA);
+	bgb=MAP_create(zona1[0],BG_B,ind);
+	ind+=zona1[0]->tileset->numTile;
 	
 	
-	VDP_loadTileSet(zona1b[habit]->tileset,ind,DMA);
-	bga=MAP_create(zona1b[habit],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO B SIEMPRE PRIORIDAD ALTA!
-	ind+=zona1b[habit]->tileset->numTile;
+	VDP_loadTileSet(zona1b[0]->tileset,ind,DMA);
+	bga=MAP_create(zona1b[0],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO B SIEMPRE PRIORIDAD ALTA!
+	ind+=zona1b[0]->tileset->numTile;
 	
 	blxpri[0].x=159;blxpri[0].y=143;//pared 
 	blxpri[1].x=319;blxpri[1].y=159;//bloque
@@ -239,10 +236,9 @@ static void loadzona(){
 	
 	//-------------------------------------------
 	for(u8 i=1;i<4;i++){
-		object2D_maker(penguin,i-1,randU16(0,3),32*(i+1),32*(i+1),0,randU16(0,1));
+		object2D_maker(penguin,i-1,randU8(0,3),32*(i+1),32*(i+1),0,randU8(0,1));
 	}
 	//--------------------------------------------
-	
 	
 }
 
@@ -294,7 +290,6 @@ static void jugpenguin(){
 	}
 	
 	
-	
 	if(pdir>0){	
 		if(PX%32==0 && PY%32==0){
 			if(!JUGmueve){ JUGmueve=TRUE; //SI TENEMOS UNA CORDENADA MULTIPLE 32
@@ -310,12 +305,24 @@ static void jugpenguin(){
 		
 		//-----------------------------------------------------------------
 		if(pdirc!=pdircm){pdirc=pdircm;
-			jugdir4();
+			switch(pdircm){
+				case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}
+				break;
+				case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}
+				break;
+				case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
+				break;
+				case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
+			}
+			
+			SPR_setHFlip(penguinsp,pflag);
+			SPR_ACT=TRUE;
 		}
 		
 		panim--;
 		if(panim==0){panim=3;
-			SPR_nextFrame(penguinsp);SPR_ACT=TRUE;
+			SPR_nextFrame(penguinsp);
+			SPR_ACT=TRUE;
 		}
 		//---------------------------------------------------------------------
 		
@@ -338,20 +345,4 @@ static void jugpenguin(){
 	}
 	
 }
-
-static void jugdir4(){
-	switch(pdircm){
-		case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}
-		break;
-		case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}
-		break;
-		case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
-		break;
-		case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
-	}
-	
-	SPR_setHFlip(penguinsp,pflag);
-	SPR_ACT=TRUE;
-}
-
 
