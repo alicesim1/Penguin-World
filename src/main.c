@@ -3,7 +3,7 @@
 *      @Title:  PENGUIN WORLD
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
-#define Version "0.05"
+#define Version "0.07"
 
 //res ficheros
 #include "../res/logos.h"

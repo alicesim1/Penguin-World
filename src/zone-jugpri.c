@@ -123,7 +123,7 @@ void ZoneMap(){
 		
 		jugpenguin();
 		
-		VDP_drawInt(move_scroll,0,0,26);
+		//VDP_drawInt(move_scroll,0,0,26);
 		if(move_scroll){pintarAB();SPR_update();}
 		
 		VDP_drawInt(SYS_getCPULoad(),2,38,27);
@@ -133,15 +133,15 @@ void ZoneMap(){
 		if(!gat){
 			if(BUTTONS[8]){ gat=TRUE;
 				jugcontrol++;if(jugcontrol==4)jugcontrol=0;
-				VDP_drawInt(jugcontrol,0,0,27);
+				VDP_drawInt(jugcontrol,0,0,26);
 			}
 			
-			if(BUTTONS[6] && !gat){ gat=TRUE;
+			/*if(BUTTONS[6] && !gat){ gat=TRUE;
 				VDP_setTileMapXY(BG_B,TILE_ATTR_FULL(2,1,0,0,1472),36,12);
 			}
 			if(BUTTONS[7] && !gat){ gat=TRUE;
 				VDP_setTileMapXY(BG_A,TILE_ATTR_FULL(1,1,0,0,1025),36,20);
-			}
+			}*/
 		
 		}else if(!BUTTONS[0]) gat=FALSE;
 		
