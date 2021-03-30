@@ -1,6 +1,6 @@
 # Penguin-World
 
-![Titulo](https://raw.githubusercontent.com/alicesim1/Penguin-World/screenshot/titulo.jpg)
+![Titulo](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/titulo.jpg)
 
 Proyecto indie retro en desarrollo:
 
@@ -11,7 +11,7 @@ Plataforma: **SEGA Mega Drive/Genesis**
 
 **+Primera Zona de pruebas** in game (sin música), aun en desarrollo:
 
-![Test Zone 1](https://raw.githubusercontent.com/alicesim1/Penguin-World/screenshot/testzone1.jpg)
+![Test Zone 1](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/testzone1.jpg)
 
 Añade 3 Sprites estáticos de prueba, para cambiar las prioridades del jugador.
 
