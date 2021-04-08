@@ -6,6 +6,7 @@
 #include "../inc/global.h"
 
 //---------------Zona 1---------------------------------
+#include "../inc/zona1dat.h"
 #include "../res/zona1.h"//res ficheros
 const MapDefinition* const zona1[] = {&z1h1};
 Map* bgb; //PLANO B (Fondo del nivel Prioridad Baja(*Puertas Altas...))
