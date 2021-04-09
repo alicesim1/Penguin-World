@@ -27,8 +27,10 @@ void TITUTLO(){
 	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6,TRUE,TRUE);
 	JOY_waitPressBtnTime(900);
 	VDP_clearPlane(BG_B,TRUE);
-
+	
+	SYS_doVBlankProcess();
 	XGM_startPlay(M_titulo);
+	
 	SEGALOGO();
 	if(BUTTONS[0]==0) SGDKlogo();
 	if(BUTTONS[0]==0) ALICESIM1();
@@ -73,7 +75,7 @@ void TITUTLO(){
 	for(num_lin=9;num_lin<120;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,CPU);
 	if(BUTTONS[0]>9){
 		PAL_interruptFade();
-		PAL_setColors(0,&paleta64[0],64); //paleta en negro, PAL2
+		PAL_setColors(0,&paleta64[0],64);//restaura las paletas
 	}
 	PAL_setPalette(2,palette_black);
 	

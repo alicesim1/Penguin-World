@@ -74,7 +74,7 @@ static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , 
 void ZoneMap(){
 	
 	//--------------------------------------
-	VDP_setPalette(2,palette_green);VDP_setPalette(3,palette_blue);
+	PAL_setColors(0,palette_black,64);
 	
 	VDP_setWindowVPos(1,26);// 27max vertical Windows
 	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
@@ -87,8 +87,10 @@ void ZoneMap(){
 	jugcontrol=3;
 	
 	jugpri=jugpricpy=TRUE;
-	
-	memcpy(&paleta32[16],penguin.palette->data,8*2);//16+8
+
+	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
+	memcpy(&paleta64[32],&palette_green, 16 * 2);
+	memcpy(&paleta64[48],&palette_blue, 16 * 2);
 	
 	SPR_init();
 	
@@ -109,7 +111,9 @@ void ZoneMap(){
 		case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
 		break;
 		case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
+		
 	}
+	
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
@@ -122,7 +126,14 @@ void ZoneMap(){
 	
 	SPR_ACT=FALSE;
 	
-	PAL_fadeIn(0,32,&paleta32[0],20,0);
+	XGM_startPlay(M_zone1);
+	
+	PAL_fadeInAll(paleta64,20,TRUE);
+	
+	VDP_drawInt(zona1dat[0].ancho,0,0,26);
+	VDP_drawInt(zona1dat[0].casillas[1],0,2,26);
+	VDP_drawInt(zona1dat[0].blockpri[0],0,0,27);
+	
 	
 	bool gat=TRUE;
     while(1){//LOOP BASICO(NUNCA SE SALE!)
@@ -136,6 +147,8 @@ void ZoneMap(){
 		
 		
 		if(!gat){
+			
+			
 			if(BUTTONS[8]){ gat=TRUE;
 				jugcontrol++;if(jugcontrol==4)jugcontrol=0;
 				VDP_drawInt(jugcontrol,0,0,26);
@@ -176,9 +189,9 @@ static void object2D_maker(SpriteDefinition sprited, u8 num_obj , u8 pal , u16 X
 }
 
 static void pintarAB(){
-	VDP_drawInt(PX,3,20,26);VDP_drawInt(PY,3,20,27);
+	//VDP_drawInt(PX,3,20,26);VDP_drawInt(PY,3,20,27);
 	
-	VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
+	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
 	MAP_scrollTo(bgb,posX,posY);MAP_scrollTo(bga,posX,posY);
 	move_scroll=FALSE;
 	
@@ -193,10 +206,10 @@ static void pintarAB(){
 	
 	
 	SPR_setDepth(penguinsp,-posY);
-	VDP_drawInt(-posY,3,0,27);
+	//VDP_drawInt(-posY,3,0,27);
 	
 	posXt=posX+160;posYt=posY+112;//centro de la pantalla
-	VDP_drawInt(posXt,3,10,26);VDP_drawInt(posYt,3,10,27);
+	//VDP_drawInt(posXt,3,10,26);VDP_drawInt(posYt,3,10,27);
 	
 	jugpri=TRUE;
 	for(i=0;i<top_blxpri;i++){
@@ -214,9 +227,9 @@ static void pintarAB(){
 
 static void loadzona(){
 	
-	memcpy(&paleta32[0],zona1[0]->palette->data,16*2);
-	paleta32[0]=0;//colro de fondo 100% negro
-	paleta32[15]=RGB24_TO_VDPCOLOR(0xFFFFFF);//color 15 (texo...) Blanco
+	memcpy(&paleta64[0],zona1[0]->palette->data,16*2);
+	paleta64[0]=0;//colro de fondo 100% negro
+	paleta64[15]=RGB24_TO_VDPCOLOR(0xFFFFFF);//color 15 (texo...) Blanco
 	
 	u8 ind=0;
 	VDP_loadTileSet(zona1[0]->tileset,ind,DMA);
