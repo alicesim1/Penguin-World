@@ -3,23 +3,19 @@
 *      @Title:  PENGUIN WORLD
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
-
-//----------------------------
-
 #include "../inc/global.h"
 //-----------------------------------------------------
-
 
 //Definiciones de las funciones---------------------------------------------------
 static void inputHandler(u16,u16,u16);
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
-void main(){	
+void main(){
 	
 	//--------------------------------------
 	JOY_setEventHandler(&inputHandler);
 	
-	//TITUTLO();
+	TITUTLO();
 	
 	ZoneMap();
 	
