@@ -9,7 +9,7 @@ Plataforma: **SEGA Mega Drive/Genesis**
 # Que está desarrollado: #
 **+Logos + Titulo + Música**
 
-**+Primera Zona de pruebas** in game (sin música), aun en desarrollo:
+**+Primera Zona de pruebas** in game , aun en desarrollo:
 
 ![Test Zone 1](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/testzone1.jpg)
 
@@ -17,6 +17,7 @@ Añade 3 Sprites estáticos de prueba, para cambiar las prioridades del jugador.
 
 También características de prioridad entre planos A/B con el jugador.
 
+Sistema de colisiones por grilla!
 
 ## Botones: ##
 **A + Start = HardReset**
