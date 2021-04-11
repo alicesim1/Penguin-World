@@ -22,7 +22,12 @@ void main(){
 }
 
 
-
+void play_music(u8 indice){
+	switch(indice){
+		case 1:XGM_startPlay(M_titulo);break;
+		case 2:XGM_startPlay(M_zone1);
+	}
+}
 
 //https://github.com/diegomtassis/yamd-library/blob/master/src/fwk/commons.c#L40
 u8 randU8(u8 lower, u8 higher) {
