@@ -20,6 +20,7 @@ void ZoneMap();
 
 
 typedef struct {
+  const bool const PlanA;
   const u8 const musica;
   const u8 const *casillas;
   const u8 const top_blxpri;

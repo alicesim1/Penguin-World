@@ -49,7 +49,8 @@ static void jug2diso();
 static void jugpenguin();
 
 //------------------------------------------------------------------------------------------
-#define top_object2D 3
+
+/*#define top_object2D 3
 struct t_object2D {
 	Sprite* sprt;
 	u16 x, y;
@@ -57,7 +58,7 @@ struct t_object2D {
 struct t_object2D object2D[top_object2D];
 //------------------------------------------------------------------------------------------
 static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , bool );
-
+*/
 //--------------------------------------------------------------------------------------------
 
 
@@ -111,7 +112,7 @@ void ZoneMap(){
 	
 	loadzona();pintarAB();
 	
-	SPR_update();SYS_doVBlankProcess();//fix (60Hrz) pintarAB Se necesita ciclos de procesamiento para pintar Sprites
+	SYS_doVBlankProcess();//fix (60Hrz) pintarAB Se necesita ciclos de procesamiento para pintar Sprites
 	SPR_update();
 	
 	SPR_ACT=FALSE;
@@ -122,29 +123,27 @@ void ZoneMap(){
 	
 	//SYS_showFrameLoad(TRUE);
 	
-	
 	bool gat=TRUE;
     while(1){//LOOP BASICO(NUNCA SE SALE!)
 		
 		jugpenguin();
 		
 		//VDP_drawInt(move_scroll,0,0,26);
-		if(move_scroll){pintarAB();SPR_update();}
-		
-		VDP_drawInt(SYS_getCPULoad(),2,38,27);
+		if(move_scroll) pintarAB();
 		
 		
-		if(!gat){
-			
+		
+		if(!gat){	
 			
 			if(BUTTONS[8]){ gat=TRUE;
 				jugcontrol++;if(jugcontrol==4)jugcontrol=0;
 				VDP_drawInt(jugcontrol,0,39,26);
 			}
-		
+			
 		}else if(!BUTTONS[0]) gat=FALSE;
 		
 		
+		VDP_drawInt(SYS_getCPULoad(),2,38,27);
 		SYS_doVBlankProcess(); // Renderizamos la pantalla
 		
 		if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
@@ -153,7 +152,7 @@ void ZoneMap(){
 }
 
 
-
+/*
 static void object2D_maker(SpriteDefinition sprited, u8 num_obj , u8 pal , u16 X, u16 Y, bool v, bool h){
 	
 	object2D[num_obj].x= STARTXT+(X-Y)   +160;
@@ -168,6 +167,7 @@ static void object2D_maker(SpriteDefinition sprited, u8 num_obj , u8 pal , u16 X
 			}
 		}
 	}
+	
 	object2D[num_obj].x-=12;object2D[num_obj].y-=26;
 	
 	object2D[num_obj].sprt=SPR_addSprite(&sprited, object2D[num_obj].x-posX, object2D[num_obj].y-posY, TILE_ATTR(pal,tempbol,v,h));
@@ -176,30 +176,32 @@ static void object2D_maker(SpriteDefinition sprited, u8 num_obj , u8 pal , u16 X
 	SPR_setFrame(object2D[num_obj].sprt,1);//parado
 	
 }
+*/
+
 
 static void pintarAB(){
 	
 	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
-	MAP_scrollTo(bgb,posX,posY);MAP_scrollTo(bga,posX,posY);
+	MAP_scrollTo(bgb,posX,posY);
+	
+	if(zona1dat[0].PlanA) MAP_scrollTo(bga,posX,posY);
 	move_scroll=FALSE;
 	
 	u8 i;
 	//-----------------------------------------------------------
-	for(i=0;i<3;i++){
+	/*for(i=0;i<3;i++){
 		SPR_setPosition(object2D[i].sprt,object2D[i].x-posX,object2D[i].y-posY);
-	}
+	}*/
 	
 	///////////////////////////////////////////////////
-	
 	
 	SPR_setDepth(penguinsp,-posY);
 	//VDP_drawInt(-posY,3,0,27);
 	
-	posXt=posX+160;posYt=posY+112;//centro de la pantalla
-	//VDP_drawInt(posXt,3,10,26);VDP_drawInt(posYt,3,10,27);
-	
 	jugpri=TRUE;
 	if(zona1dat[0].top_blxpri>0){
+		posXt=posX+160;posYt=posY+112;//centro de la pantalla
+		//VDP_drawInt(posXt,3,10,26);VDP_drawInt(posYt,3,10,27);
 		for(i=0;i<zona1dat[0].top_blxpri;i+=2){
 			if(posXt+48>zona1dat[0].blockpri[i] && posXt-48<zona1dat[0].blockpri[i] && posYt+48>zona1dat[0].blockpri[i+1] && posYt<=zona1dat[0].blockpri[i+1]){
 				jugpri=FALSE; break;
@@ -211,7 +213,7 @@ static void pintarAB(){
 		SPR_setPriorityAttribut(penguinsp,jugpri);
 	}
 	
-	
+	SPR_update();
 }
 
 static void loadzona(){
@@ -225,16 +227,16 @@ static void loadzona(){
 	bgb=MAP_create(zona1[0],BG_B,ind);
 	ind+=zona1[0]->tileset->numTile;
 	
-	
-	VDP_loadTileSet(zona1b[0]->tileset,ind,DMA);
-	bga=MAP_create(zona1b[0],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO B SIEMPRE PRIORIDAD ALTA!
-	ind+=zona1b[0]->tileset->numTile;
-	
+	if(zona1dat[0].PlanA){
+		VDP_loadTileSet(zona1b[0]->tileset,ind,DMA);
+		bga=MAP_create(zona1b[0],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO A SIEMPRE PRIORIDAD ALTA!
+		//ind+=zona1b[0]->tileset->numTile;
+	}
 	
 	//-------------------------------------------
-	for(u8 i=1;i<4;i++){
+	/*for(u8 i=1;i<4;i++){
 		object2D_maker(penguin,i-1,i,32*(i+2),32*(i+2),0,randU8(0,1));
-	}
+	}*/
 	//--------------------------------------------
 	
 }
@@ -326,39 +328,39 @@ static void jugpenguin(){
 		
 		PX32=(PX+16)/32;PY32=(PY+16)/32;//division 32
 		
-		VDP_drawInt(PX32,0,10,26);VDP_drawInt(PY32,0,12,26);
-		VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,0,27);
+		//VDP_drawInt(PX32,0,10,26);VDP_drawInt(PY32,0,12,26);
+		//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,0,27);
 		
 		switch(pdircm){
 		case 1:
 			if(PY>0){ PY-=VELPING;
 				if(PY>15){ PY32--;
-					VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+					//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
 					if(zona1dat[0].casillas[PX32+(PY32*8)]!=1 && PY-(PY32*32)<32) PY=PYC;
 				}
 			}
 		break;
 		case 2:
 			PY+=VELPING;PY32++;
-			VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+			//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
 			if(zona1dat[0].casillas[PX32+(PY32*8)]!=1 && (PY32*32)-PY<32) PY=PYC;
 		break;
 		case 3:
 			if(PX>0){ PX-=VELPING;
 				if(PX>15){ PX32--;
-					VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+					//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
 					if(zona1dat[0].casillas[PX32+(PY32*8)]!=1 && PX-(PX32*32)<32) PX=PXC;
 				}
 			}
 		break;
 		case 4:
 			PX+=VELPING;PX32++;
-			VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+			//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
 			if(zona1dat[0].casillas[PX32+(PY32*8)]!=1 && (PX32*32)-PX<32) PX=PXC;
 		}
 		
-		VDP_drawInt(PX32,0,10,26);VDP_drawInt(PY32,0,12,26);
-		VDP_drawInt(PX+16,3,20,26);VDP_drawInt(PY+16,3,20,27);
+		//VDP_drawInt(PX32,0,10,26);VDP_drawInt(PY32,0,12,26);
+		//VDP_drawInt(PX+16,3,20,26);VDP_drawInt(PY+16,3,20,27);
 		
 		jug2diso();
 		

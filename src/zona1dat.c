@@ -25,16 +25,20 @@ const u16 const blxpri_0[] = {
 
 const t_zona zona1dat[TOP_ZONAS] = {
   {
-    2, //musica
+    TRUE, //PlanA
+	2, //musica
     casillas_0,  //casillas
 	9, //top_blxpri
 	blxpri_0 //blockpri
+	
   },
   {
-    0,//ancho
+    FALSE, //PlanA
+	2,//musica
     0,//casillas /* 0 = null*/
-	0,
-	0
+	0,//top_blxpri
+	0 //blockpri
+	
   }
 };
 

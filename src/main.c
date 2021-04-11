@@ -15,7 +15,7 @@ void main(){
 	//--------------------------------------
 	JOY_setEventHandler(&inputHandler);
 	
-	TITUTLO();
+	//TITUTLO();
 	
 	ZoneMap();
 	
