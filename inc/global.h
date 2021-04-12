@@ -18,10 +18,13 @@ u16 paleta64[64]; //copia Paletas 0,1,2,3 ,para fades completos
 void TITUTLO();
 void ZoneMap();
 
+u8 ZONA_NUM;
+u8 old_musica;
 
 typedef struct {
   const bool const PlanA;
   const u8 const musica;
+  const u8 const Xtop;
   const u8 const *casillas;
   const u8 const top_blxpri;
   const u16 const *blockpri;

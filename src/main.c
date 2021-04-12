@@ -25,7 +25,8 @@ void main(){
 void play_music(u8 indice){
 	switch(indice){
 		case 1:XGM_startPlay(M_titulo);break;
-		case 2:XGM_startPlay(M_zone1);
+		case 2:XGM_startPlay(M_zone1);break;
+		default: XGM_stopPlay();
 	}
 }
 

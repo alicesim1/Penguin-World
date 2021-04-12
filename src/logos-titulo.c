@@ -143,8 +143,7 @@ void TITUTLO(){
 	VDP_setTextPalette(PAL0);
 	VDP_setScrollingMode(HSCROLL_PLANE,VSCROLL_PLANE);
 	
-	XGM_stopPlay();
-	SYS_doVBlankProcess();//necesita VSync para parar la musica por completo
+	//XGM_stopPlay();SYS_doVBlankProcess();//necesita VSync para parar la musica por completo
 	
 	
 }
