@@ -8,10 +8,10 @@
 //---------------Zona 1---------------------------------
 #include "../inc/zona1dat.h"
 #include "../res/zona1.h"//res ficheros
-const MapDefinition* const zona1[] = {&z1h0,&z1h1,&z1h2};
+const MapDefinition* const zona1[] = {&z1h0,&z1h1,&z1h2,&z1h3};
 Map* bgb; //PLANO B (Fondo del nivel Prioridad Baja(*Puertas Altas...))
 
-const MapDefinition* const zona1b[] = {0,&z1h1b,0};
+const MapDefinition* const zona1b[] = {0,&z1h1b,0,0};
 Map* bga; //PLANO A (Capa superior Prioridad Alta)
 //-----------------------------------------------------------
 
@@ -23,9 +23,14 @@ u16 posXt,posYt;
 static void loadzona();
 static void pintarAB();
 
-const u8 STARTXT=128;
-const s8 STARTYT=-32;
+u8 ZONA_NUM;
+//-------5 x 8
+//u16 STARTXT=128;
+s8 STARTYT=-32;
 
+//----------11 x 16 
+u16 STARTXT=319;
+//s8 STARTYT=-64;
 
 //---------------------------------------------------------
 // DATA
@@ -64,6 +69,8 @@ static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , 
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
+
+	ZONA_NUM=3;
 	
 	//--------------------------------------
 	PAL_setColors(0,palette_black,64);
@@ -72,8 +79,9 @@ void ZoneMap(){
 	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	
 	
-	PX=32*1;PY=32*3;
-	//PX=PY=32;
+	//PX=32*1;PY=32*7; // casillas_2 11 x 16
+	
+	PX=PY=32; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
 	
 	JUGmueve=FALSE;
 	panim=3;
@@ -107,7 +115,7 @@ void ZoneMap(){
 	
 	jug2diso();
 	
-	ZONA_NUM=0;
+
 	old_musica=0;
 	
 	//SYS_showFrameLoad(TRUE);
@@ -115,8 +123,6 @@ void ZoneMap(){
 	bool gat;
     while(1){//LOOP BASICO(NUNCA SE SALE!)
 	
-		VDP_drawInt(ZONA_NUM,0,0,26);
-		VDP_drawInt(zona1dat[ZONA_NUM].Xtop,2,0,27);
 		
 		loadzona();pintarAB();
 		

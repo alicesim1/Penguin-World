@@ -13,14 +13,13 @@ void play_music(u8);
 
 u8 randU8(u8,u8);
 
-u16 paleta64[64]; //copia Paletas 0,1,2,3 ,para fades completos
+u16 paleta64[64];
 
 void TITUTLO();
 void ZoneMap();
 
-u8 ZONA_NUM;
 u8 old_musica;
-
+//-----------------------------------
 typedef struct {
   const bool const PlanA;
   const u8 const musica;

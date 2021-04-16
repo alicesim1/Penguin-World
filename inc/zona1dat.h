@@ -2,7 +2,7 @@
 #define _ZONA1DAT_H
 
 
-#define TOP_ZONAS 3
+#define TOP_ZONAS 4
 
 const u8 const casillas_0[]; 
 const u16 const blxpri_0[];
