@@ -4,7 +4,21 @@
 #include "../res/basicos.h"//fuente, pinguno jug,
 #include "../res/musica.h"
 //-----------------------------------------------
-u16 BUTTONS[9];
+u8 padtipo;
+u8 pad6;
+u8 padraton;
+u8 padmouse;
+
+u16 BUTTONS[12];
+
+s16 readedX;
+s16 readedY;
+Vect2D_s16 joypos;
+
+
+void _JOYsetXY ( s16 x, s16 y );
+void _JOYupdateMouse ();
+
 
 char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);

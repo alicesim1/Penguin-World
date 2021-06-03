@@ -13,6 +13,26 @@ static void inputHandler(u16,u16,u16);
 void main(){
 	
 	//--------------------------------------
+	
+	
+	padtipo=JOY_getPortType(PORT_1);//13 = 
+	//padtipo=15;//NINGUNO
+	//padtipo=13;//PAD3,6
+	//padtipo=0;//MOUSE
+
+	padraton=JOY_getPortType(PORT_2);
+	if(padraton==PORT_TYPE_MOUSE) JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE); //3
+	//padraton=15;//NINGUNO
+	//padraton=13;//PAD3,6
+	//padraton=3;//MOUSE
+	
+	SYS_doVBlankProcess(); // Renderizamos la pantalla
+	
+	pad6=JOY_getJoypadType(JOY_1);
+	//0=3 botones
+	//1=6 botones
+	//15=NINGUNO
+	
 	JOY_setEventHandler(&inputHandler);
 	
 	//TITUTLO();
@@ -47,16 +67,59 @@ void VDP_drawInt(s32 valor,u8 ceros,u8 x, u8 y){
  * changed -> indica si ha cambiado (pulsado o solatado)
  * */
 void inputHandler(u16 joy, u16 state, u16 changed){
-    BUTTONS[0]=changed;
+   
+   BUTTONS[0]=changed;
 	
-	BUTTONS[1]=changed & BUTTON_UP;
-	BUTTONS[2]=changed & BUTTON_DOWN;
-	BUTTONS[3]=changed & BUTTON_LEFT;
-	BUTTONS[4]=changed & BUTTON_RIGHT;
+	if(joy==JOY_1){
+		
+		BUTTONS[1]=changed & BUTTON_UP;
+		BUTTONS[2]=changed & BUTTON_DOWN;
+		BUTTONS[3]=changed & BUTTON_LEFT;
+		BUTTONS[4]=changed & BUTTON_RIGHT;
+		
+		BUTTONS[8]=changed & BUTTON_START;
+		
+		if(pad6==JOY_TYPE_PAD6){	
+			BUTTONS[9]=changed & BUTTON_X;
+			BUTTONS[10]=changed & BUTTON_Y;
+			BUTTONS[11]=changed & BUTTON_Z;
+			BUTTONS[12]=changed & BUTTON_MODE;
+		}
+	}
 	
-	BUTTONS[5]=changed & BUTTON_A;
-	BUTTONS[6]=changed & BUTTON_B;
-	BUTTONS[7]=changed & BUTTON_C;
-	BUTTONS[8]=changed & BUTTON_START;
+	BUTTONS[5]=changed & BUTTON_A;//Boton Central
+	BUTTONS[6]=changed & BUTTON_B;//Boton Izquiero
+	BUTTONS[7]=changed & BUTTON_C;//Boton Derecho
 	
 }
+
+
+void _JOYsetXY ( s16 x, s16 y )
+{
+   
+	readedX = JOY_readJoypadX(JOY_2);
+	readedY = JOY_readJoypadY(JOY_2);
+  
+   joypos.x = x;
+   joypos.y = y;
+}
+
+
+void _JOYupdateMouse ()
+{
+   s16 readX = JOY_readJoypadX(JOY_2);
+   s16 readY = JOY_readJoypadY(JOY_2);
+   
+   joypos.x -= readedX - readX;
+   joypos.y -= readedY - readY;
+   
+   if(joypos.x<0)joypos.x=0;
+   else if(joypos.x>319)joypos.x=319;
+   
+   if(joypos.y<0)joypos.y=0;
+   else if(joypos.y>223)joypos.y=223;
+   
+   readedX = readX;
+   readedY = readY;
+}
+

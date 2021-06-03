@@ -24,6 +24,17 @@ Sistema de colisiones por grilla!
 
 **Start = Cambio de Cruceta de control isométrico: 0,1,2,3**
 
+
+## SEGA Mouse##
+[[Puerto 2]] Opcionalmente!
+https://segaretro.org/Sega_Mouse
+
+Emuladores compatibles y configurables:
+-Kega Fusion 364 (Genesis controles)
+-Blastem (Systema configuracion)
+-RetroArch -> Genesis Plus GX (Menu de configuracion)
+
+
 ### Configuración Dirección Cruceta: ###
 0= Solo Diagonales
 
