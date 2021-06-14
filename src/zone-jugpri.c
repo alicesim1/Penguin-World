@@ -83,7 +83,7 @@ void ZoneMap(){
 	VDP_setWindowVPos(1,25);// 27max vertical Windows
 	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	
-	PAL_setColors(0,palette_black,64);
+	PAL_setColors(0,palette_black,64,DMA);
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
 	
@@ -130,10 +130,10 @@ void ZoneMap(){
 		
 		loadzona();
 		
-		KLog("start");
+		/*KLog("start");
 		KLog_U2("PX:", PX," PY:", PY);
 		KLog_S2("posX:", posX," posY:", posY);
-		KLog("----");
+		KLog("----");*/
 		if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
 			play_music(zona1dat[ZONA_NUM].musica);
@@ -188,7 +188,7 @@ void ZoneMap(){
 				VDP_drawInt(joypos.y,3,35,25);
 			}
 			
-			//VDP_drawInt(SYS_getCPULoad(),2,38,27);
+			VDP_drawInt(SYS_getCPULoad(),2,38,27);
 			
 			//if(SPR_Pinta){  SPR_Pinta=FALSE;
 				SPR_update();
@@ -197,11 +197,11 @@ void ZoneMap(){
 			
 			
 			
-			//if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
+			if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
 			
 			
 			
-		}while(1);//!BUTTONS[7] || gat);
+		}while(!BUTTONS[7] || gat);
 		
 		gat=TRUE;
 		
@@ -227,13 +227,6 @@ void ZoneMap(){
 }
 
 
-
-static void pintarAB(){	
-	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
-	MAP_scrollTo(bgb,posX,posY);
-	
-	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
-}
 
 static void SPR_PRIORITY(){
 	
@@ -386,6 +379,13 @@ static void jugpenguin(){
 }
 
 
+static void pintarAB(){	
+	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
+	MAP_scrollTo(bgb,posX,posY);
+	
+	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
+}
+
 static void loadzona(){
 	
 	VDP_clearPlane(BG_B,TRUE);	VDP_clearPlane(BG_A,TRUE);
@@ -393,22 +393,23 @@ static void loadzona(){
 	SYS_doVBlankProcess();
 	
 	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
-	paleta64[0]=0;//colro de fondo 100% negro
+	paleta64[0]=0;//colro de fondo 100% -Negro
 	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
 	
-	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,DMA);
+	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,CPU);
 	bgb=MAP_create(zona1[ZONA_NUM],BG_B,1);
 	
-	if(zona1dat[ZONA_NUM].PlanA){ u8 ind;
+	if(zona1dat[ZONA_NUM].PlanA){ 
+		u8 ind;
 		ind=1+zona1[ZONA_NUM]->tileset->numTile;
-		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,DMA);
+		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
 		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO A SIEMPRE PRIORIDAD ALTA!
 		//ind+=zona1b[ZONA_NUM]->tileset->numTile;
 	}
 	
+	//SYS_doVBlankProcess();
 	posX=posY=0;
 	pintarAB();
-	
 	SYS_doVBlankProcess();
 	
 	jug2diso();

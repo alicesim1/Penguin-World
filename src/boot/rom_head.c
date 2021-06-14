@@ -12,7 +12,7 @@ const ROMHeader rom_header = {
     "PENGUIN WORLD - ALPHA DEVOLOPER                 ",
     "GM 00000000-00",
     0x000,
-    "J6              ",
+    "J6M             ",
     0x00000000,
 #if (ENABLE_BANK_SWITCH != 0)
     0x003FFFFF,

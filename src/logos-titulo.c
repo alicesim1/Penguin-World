@@ -75,9 +75,9 @@ void TITUTLO(){
 	for(num_lin=9;num_lin<120;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,CPU);
 	if(BUTTONS[0]>9){
 		PAL_interruptFade();
-		PAL_setColors(0,&paleta64[0],64);//restaura las paletas
+		PAL_setColors(0,&paleta64[0],64,DMA);//restaura las paletas
 	}
-	PAL_setPalette(2,palette_black);
+	PAL_setPalette(2,palette_black,DMA);
 	
 	VDP_drawImageEx(BG_B,&titush,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),3,0,FALSE,TRUE);
 	ind+=titulo.tileset->numTile;
@@ -155,7 +155,7 @@ static void SEGALOGO(){
 	
 	u16 paleta16or[16];
 	memcpy(&paleta16or[0],logosega.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black);
+	PAL_setPalette(0,palette_black,DMA);
 	
 	VDP_drawImageEx(BG_B,&logosega,1,20-6,14-2,FALSE,TRUE);
 	
@@ -167,7 +167,7 @@ static void SEGALOGO(){
 	PAL_fadeIn(14,15,&paleta16or[14],15,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(900);
-	else PAL_setPalette(PAL0,logosega.palette->data);
+	else PAL_setPalette(PAL0,logosega.palette->data,DMA);
 	
 	PAL_fadeOutAll(20,FALSE);
 	VDP_clearPlane(BG_B,TRUE);
@@ -179,13 +179,13 @@ static void SGDKlogo(){
 	
 	u16 paleta16or[16];
 	memcpy(&paleta16or[0],sgdklogo.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black);
+	PAL_setPalette(0,palette_black,DMA);
 	
 	VDP_drawImageEx(BG_B,&sgdklogo,1,20-4,14-4,FALSE,TRUE);
 	PAL_fadeIn(0,15,&paleta16or[0],10,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
-	else PAL_setPalette(PAL0,sgdklogo.palette->data);
+	else PAL_setPalette(PAL0,sgdklogo.palette->data,DMA);
 	
 	PAL_fadeOutAll(20,FALSE);
 	VDP_clearPlane(BG_B,TRUE);
@@ -199,8 +199,8 @@ static void ALICESIM1(){
 	u16 paleta16or[16];
 	
 	memcpy(&paleta16or[0],alicesim1.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black);
-	PAL_setPalette(1,palette_grey);
+	PAL_setPalette(0,palette_black,DMA);
+	PAL_setPalette(1,palette_grey,DMA);
 	VDP_setTextPalette(PAL1);
 	
 	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-4,FALSE,TRUE);
@@ -223,7 +223,7 @@ static void ALICESIM1(){
 	}
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
-	else PAL_setPalette(0,paleta16or);
+	else PAL_setPalette(0,paleta16or,DMA);
 	
 	PAL_fadeOutAll(20,FALSE);
 	
