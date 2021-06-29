@@ -4,12 +4,17 @@
 #include "../res/basicos.h"//fuente, pinguno jug,
 #include "../res/musica.h"
 //-----------------------------------------------
-u8 padtipo;
-u8 pad6;
-u8 padraton;
-u8 padmouse;
 
-u16 BUTTONS[12];
+u8 ScreenY;		//27/29
+u8 ScreenMY;	//112/120
+u8 ScreenTY;	//224/240
+s8 fixAlturaY;	//-24/-32
+
+u8 padtipo;		//JOY_getPortType(PORT_1);
+u8 pad6;		//JOY_getJoypadType(JOY_1);
+u8 padraton;	//JOY_getPortType(PORT_2);
+
+u16 BUTTONS[13];
 
 s16 readedX;
 s16 readedY;
@@ -38,6 +43,7 @@ typedef struct {
   const bool const PlanA;
   const u8 const musica;
   const u8 const Xtop;
+  const u8 const Ytop;
   const u8 const *casillas;
   const u8 const top_blxpri;
   const u16 const *blockpri;

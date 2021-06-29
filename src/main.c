@@ -10,10 +10,32 @@
 static void inputHandler(u16,u16,u16);
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
-void main(){
+void main(u16 hard){
+	if(!hard){
+		SYS_hardReset(); //si se hace Soft-Reset, probocamos limpieza total de la RAM!
+		KLog("RESET!");
+	}
 	
+	if(IS_PALSYSTEM){
+		KLog("PAL-240");
+		VDP_setScreenHeight240();//29(30) tiles x8 (Solo para PAL = 50FPS) NTSC No puede usar este modo!
+		ScreenY=29;
+		fixAlturaY=-32;
+		}
+	else {
+		KLog("NTSC-224");
+		ScreenY=27;
+		fixAlturaY=-24;
+	}
+	KLog_U1("ScreenY:",ScreenY);
+	KLog_S1("fixAlturaY:",fixAlturaY);
+	ScreenTY=8+(ScreenY*8);//224/240
+	ScreenMY=ScreenTY/2;//112/120
+	
+	KLog_U1("ScreenTY:",ScreenTY);
+	KLog_U1("ScreenMY:",ScreenMY);
 	//--------------------------------------
-	
+	KLog("---------------");
 	
 	padtipo=JOY_getPortType(PORT_1);//13 = 
 	//padtipo=15;//NINGUNO
@@ -78,8 +100,7 @@ void inputHandler(u16 joy, u16 state, u16 changed){
 		BUTTONS[4]=changed & BUTTON_RIGHT;
 		
 		BUTTONS[8]=changed & BUTTON_START;
-		
-		if(pad6==JOY_TYPE_PAD6){	
+		if(pad6==1){
 			BUTTONS[9]=changed & BUTTON_X;
 			BUTTONS[10]=changed & BUTTON_Y;
 			BUTTONS[11]=changed & BUTTON_Z;
@@ -95,13 +116,12 @@ void inputHandler(u16 joy, u16 state, u16 changed){
 
 
 void _JOYsetXY ( s16 x, s16 y )
-{
-   
+{   
 	readedX = JOY_readJoypadX(JOY_2);
 	readedY = JOY_readJoypadY(JOY_2);
-  
-   joypos.x = x;
-   joypos.y = y;
+	
+    joypos.x = x;
+    joypos.y = y;
 }
 
 
@@ -117,7 +137,7 @@ void _JOYupdateMouse ()
    else if(joypos.x>319)joypos.x=319;
    
    if(joypos.y<0)joypos.y=0;
-   else if(joypos.y>223)joypos.y=223;
+   else if(joypos.y>ScreenTY-1)joypos.y=ScreenTY-1;
    
    readedX = readX;
    readedY = readY;

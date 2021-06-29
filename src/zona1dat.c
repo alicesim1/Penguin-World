@@ -10,8 +10,8 @@ const u8 const casillas_0[] = {
 	9,1,1,1,1,1,1,0,//2	,16-23
 	9,1,1,1,1,1,1,1,//3	,24-31
 	9,1,1,1,1,1,1,0,//4 ,32-39
-	9,1,1,1,1,1,1,0,//5 ,40-47
-	0,0,0,1,0,0,0,0
+	9,1,1,1,1,1,1,0 //5 ,40-47
+	//0,0,0,1,0,0,0,0
 //--0,1,2,3,4,5,6,7 = 8
 };
 
@@ -83,6 +83,7 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	FALSE, //PlanA
 	2,//musica
 	8,//Xtop
+	5,//Ytop
     casillas_0,//casillas /* 0 = null*/
 	0,//top_blxpri
 	0 //blockpri
@@ -91,6 +92,7 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	TRUE, //PlanA
 	2, //musica
 	8,//Xtop
+	5,//Ytop
     casillas_1,//casillas
 	9, //top_blxpri
 	blxpri_0 //blockpri
@@ -100,6 +102,7 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	FALSE, //PlanA
 	0, //musica
 	16,//Xtop
+	11,//Ytop
     casillas_2,//casillas
 	3, //top_blxpri
 	blxpri_2  //blockpri
@@ -109,6 +112,7 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	TRUE, //PlanA
 	0, //musica
 	16,//Xtop
+	11,//Ytop
     casillas_3,//casillas
 	6, //top_blxpri
 	blxpri_3  //blockpri
