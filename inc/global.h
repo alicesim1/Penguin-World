@@ -9,6 +9,7 @@ u8 ScreenY;		//27/29
 u8 ScreenMY;	//112/120
 u8 ScreenTY;	//224/240
 s8 fixAlturaY;	//-24/-32
+u8 ScreTile8; 	//0/8
 
 u8 padtipo;		//JOY_getPortType(PORT_1);
 u8 pad6;		//JOY_getJoypadType(JOY_1);
@@ -47,6 +48,8 @@ typedef struct {
   const u8 const *casillas;
   const u8 const top_blxpri;
   const u16 const *blockpri;
+  const u8 const topPuertas;
+  const u8 const *puertas;
 } t_zona;
 
 #endif

@@ -25,7 +25,9 @@ static void pintarAB();
 static void pintarfULLAB();
 static void SPR_PRIORITY();
 
-u8 ZONA_NUM;
+u8 ZONA_NUM,DestZONA_NUM;
+u8 DestPX32,DestPY32;
+bool PUERTA_SAL;
 
 u16 STARTXT;
 
@@ -40,7 +42,7 @@ const u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
 Sprite* penguinsp; //atributo tipo Sprite
 const u8 VELPING=2;
 s16 PX,PY;
-u8 PX32,PY32;//BLOQUES *32
+u8 PX32,PY32,PX32C,PY32C;//BLOQUES *32
 bool pflag;
 u8 pdirc,pdir,pdircm;
 u8 panim;
@@ -68,18 +70,21 @@ Sprite* cursorsp; //atributo tipo Sprite
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
-
-	ZONA_NUM=1;
+	
+	PAL_setColors(0,palette_black,64,DMA);
+	
+	old_musica=0;
+	ZONA_NUM=0;
 	
 	//PX=32*1;PY=32*7; // casillas_2 11 x 16
-	PX=32*1;PY=32*1; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
+	PX=32*3;PY=32*3; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
 	
 	//--------------------------------------
-
+	
 	//VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
 	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	
-	PAL_setColors(0,palette_black,64,DMA);
+	//----------------------------------------------
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
 	
@@ -95,8 +100,8 @@ void ZoneMap(){
 	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-16,TILE_ATTR(1,jugpri,0,0));
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
-	//pdirc=pdircm=2;//up+<<
-	//pdirc=pdircm=3;//down+<<
+	//pdirc=pdircm=2;//down+<<
+	//pdirc=pdircm=3;//up+<<
 	
 	switch(pdircm){
 		case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}break;
@@ -108,7 +113,7 @@ void ZoneMap(){
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
-	old_musica=0;
+	
 	
 	
 	bool gat=TRUE;
@@ -119,11 +124,20 @@ void ZoneMap(){
 		SPR_setDepth(cursorsp,SPR_MIN_DEPTH);
 	}
 	
-	//SYS_showFrameLoad(TRUE);
+	SYS_showFrameLoad(TRUE);
+	
+	PUERTA_SAL=TRUE;
 	
     while(1){//LOOP BASICO(NUNCA SE SALE!)
 		
 		loadzona();
+		
+		/*VDP_drawInt(ZONA_NUM,0,0,ScreenY);
+		if(zona1dat[ZONA_NUM].topPuertas>0){
+			VDP_drawInt(zona1dat[ZONA_NUM].puertas[1],0,0,ScreenY-2);
+			VDP_drawInt(zona1dat[ZONA_NUM].puertas[0],0,2,ScreenY-2);
+			VDP_drawInt(zona1dat[ZONA_NUM].puertas[2],0,5,ScreenY-2);
+		}*/
 		
 		/*KLog("start");
 		KLog_U2("PX:", PX," PY:", PY);
@@ -135,25 +149,23 @@ void ZoneMap(){
 			play_music(zona1dat[ZONA_NUM].musica);
 		}
 		
-		PAL_fadeInAll(paleta64,20,TRUE);
+		SPR_update();
+		PAL_fadeInAll(paleta64,20,FALSE);
 		
-		
-		
+		PUERTA_SAL=FALSE;
 		do{
-			
 			
 			jugpenguin();
 			
 			if(!gat){
-				
+				/*if(BUTTONS[7]){ gat=TRUE;
+					
+				}*/
 			}else if(!BUTTONS[0]) gat=FALSE;
 			
 			if(padraton==PORT_TYPE_MOUSE){
 				_JOYupdateMouse();
 				SPR_setPosition(cursorsp,joypos.x,joypos.y);
-				
-				/*VDP_drawInt(joypos.x,3,30,ScreenY-2);
-				VDP_drawInt(joypos.y,3,35,ScreenY-2);*/
 			}
 			
 			
@@ -161,17 +173,17 @@ void ZoneMap(){
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
 			
-			
-			
 			if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
 			
-			
-			
-		}while(!BUTTONS[7] || gat);
+		}while(!PUERTA_SAL);
 		
-		gat=TRUE;
-		
-		PAL_fadeOutAll(20,FALSE);
+		PAL_fadeOutAll(20,TRUE);
+		do{
+			jugpenguin();
+			
+			SPR_update();
+			SYS_doVBlankProcess(); // Renderizamos la pantalla
+		}while(PAL_isDoingFade());
 		
 		
 		/*for(u8 i=0; i<4; i++){
@@ -184,11 +196,12 @@ void ZoneMap(){
 		SPR_releaseSprite(object2D[3].sprt);
 		*/
 		
-		
 		MEM_free(bgb);
 		if(zona1dat[ZONA_NUM].PlanA) MEM_free(bga);
+
+		PX=32*DestPX32;PY=32*DestPY32;
+		ZONA_NUM=DestZONA_NUM;
 		
-		ZONA_NUM++;	if(ZONA_NUM==TOP_ZONAS) ZONA_NUM=0;
     }
 }
 
@@ -236,20 +249,23 @@ static void jug2diso(){ //PX->posX
 static void jugpenguin(){
 	
 	pdir=0;
-	if 		(BUTTONS[1] && BUTTONS[4] && !BUTTONS[2] && !BUTTONS[3])pdir=1;//up+>>
-	else if (BUTTONS[1] && !BUTTONS[3] && !BUTTONS[4])pdir=1;
-	else if (BUTTONS[2] && BUTTONS[3] && !BUTTONS[1] && !BUTTONS[4])pdir=2;//down+<<
-	else if (BUTTONS[2] && !BUTTONS[3] && !BUTTONS[4])pdir=2;
-	else if (BUTTONS[1] && BUTTONS[3] && !BUTTONS[2] && !BUTTONS[4])pdir=3;//up+<<
-	else if (BUTTONS[3] && !BUTTONS[1] && !BUTTONS[2])pdir=3;
-	else if (BUTTONS[2] && BUTTONS[4] && !BUTTONS[1] && !BUTTONS[3])pdir=4;//down+>>
-	else if (BUTTONS[4] && !BUTTONS[1] && !BUTTONS[2])pdir=4;
+	if(!PUERTA_SAL){
+		if 		(BUTTONS[1] && BUTTONS[4] && !BUTTONS[2] && !BUTTONS[3])pdir=1;//up+>>
+		else if (BUTTONS[1] && !BUTTONS[3] && !BUTTONS[4])pdir=1;
+		else if (BUTTONS[2] && BUTTONS[3] && !BUTTONS[1] && !BUTTONS[4])pdir=2;//down+<<
+		else if (BUTTONS[2] && !BUTTONS[3] && !BUTTONS[4])pdir=2;
+		else if (BUTTONS[1] && BUTTONS[3] && !BUTTONS[2] && !BUTTONS[4])pdir=3;//up+<<
+		else if (BUTTONS[3] && !BUTTONS[1] && !BUTTONS[2])pdir=3;
+		else if (BUTTONS[2] && BUTTONS[4] && !BUTTONS[1] && !BUTTONS[3])pdir=4;//down+>>
+		else if (BUTTONS[4] && !BUTTONS[1] && !BUTTONS[2])pdir=4;
+	}
 	
 	s16 PXC,PYC;
 	
 	if(pdir>0){	
 		if((PX&31)==0 && (PY&31)==0){
-			if(!JUGmueve){ JUGmueve=TRUE; //SI TENEMOS UNA CORDENADA MULTIPLE 32
+			if(!JUGmueve){
+				JUGmueve=TRUE; //SI TENEMOS UNA CORDENADA MULTIPLE 32
 				pdircm=pdir;
 			}
 			PXC=PX;PYC=PY;//copiamos antiguas coordenadas x32
@@ -261,30 +277,43 @@ static void jugpenguin(){
 	
 	if(JUGmueve){
 		
-		//-----------------------------------------------------------------
-		if(pdirc!=pdircm){pdirc=pdircm;
-			switch(pdircm){
-				case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}
-				break;
-				case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}
-				break;
-				case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
-				break;
-				case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
-			}
-			SPR_setHFlip(penguinsp,pflag);
-		}
-		
-		panim--;
-		if(panim==0){panim=3;
-			SPR_nextFrame(penguinsp);
-		}
 		//---------------------------------------------------------------------
 		
 		PX32=(PX+16)>>5;PY32=(PY+16)>>5;//division 32
 		
-		//VDP_drawInt(PX32,0,10,26);VDP_drawInt(PY32,0,12,26);
-		//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,0,27);
+		if(PX32!=PX32C || PY32!=PY32C || pdirc!=pdircm){ PX32C=PX32; PY32C=PY32;
+			
+			//VDP_drawInt(PX32,0,20,ScreenY-1);VDP_drawInt(PY32,0,22,ScreenY-1);
+			
+			//VDP_drawInt(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)],0,20,ScreenY);
+			
+			u8 t;
+			for(u8 i=1;i<=zona1dat[ZONA_NUM].topPuertas;i++){//1,2,3,
+				t=6*(i-1);//0=(0,1,2,3,4,5),1=(6,7,8,9,10,11),2=(12,13,14,15,16,17),
+				if(PX32==zona1dat[ZONA_NUM].puertas[1+t] && PY32==zona1dat[ZONA_NUM].puertas[t] && pdircm==zona1dat[ZONA_NUM].puertas[2+t]){
+					DestZONA_NUM=zona1dat[ZONA_NUM].puertas[3+t];
+					DestPX32=zona1dat[ZONA_NUM].puertas[5+t];
+					DestPY32=zona1dat[ZONA_NUM].puertas[4+t];
+					PUERTA_SAL=TRUE;
+				}
+			}
+			
+			if(pdirc!=pdircm){  pdirc=pdircm;
+				switch(pdircm){
+					case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}
+					break;
+					case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}
+					break;
+					case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}
+					break;
+					case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
+				}
+				SPR_setHFlip(penguinsp,pflag);
+				
+				//VDP_drawInt(pdircm,0,25,ScreenY-1);
+			}
+			
+		}
 		
 		switch(pdircm){
 		case 1:
@@ -327,6 +356,12 @@ static void jugpenguin(){
 		if((PX&31)==0 && (PY&31)==0) JUGmueve=FALSE; //Y NOS MARCAMOS COMO QUIETOS
 		
 		if(PX!=PXC || PY!=PYC){
+		
+			panim--;
+			if(panim==0){panim=3;
+				SPR_nextFrame(penguinsp);
+			}
+			
 			jug2diso();
 			pintarAB();
 			SPR_PRIORITY();
@@ -336,7 +371,11 @@ static void jugpenguin(){
 		}
 		
 		
-	}else if(penguinsp->frameInd!=1){
+	}else {
+		PXC=PX;PYC=PY;
+	}
+	
+	if(PX==PXC && PY==PYC && penguinsp->frameInd!=1){
 		SPR_setFrame(penguinsp,1);
 		panim=3;
 	}

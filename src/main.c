@@ -20,22 +20,24 @@ void main(u16 hard){
 		KLog("PAL-240");
 		VDP_setScreenHeight240();//29(30) tiles x8 (Solo para PAL = 50FPS) NTSC No puede usar este modo!
 		ScreenY=29;
-		fixAlturaY=-32;
+		ScreTile8=8;
 		}
 	else {
 		KLog("NTSC-224");
 		ScreenY=27;
-		fixAlturaY=-24;
+		ScreTile8=0;
 	}
-	KLog_U1("ScreenY:",ScreenY);
-	KLog_S1("fixAlturaY:",fixAlturaY);
+	
+	//KLog_U1("ScreenY:",ScreenY);
+	//KLog_S1("fixAlturaY:",fixAlturaY);
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
+	fixAlturaY=-24-ScreTile8;//-24/-32
 	
-	KLog_U1("ScreenTY:",ScreenTY);
-	KLog_U1("ScreenMY:",ScreenMY);
+	//KLog_U1("ScreenTY:",ScreenTY);
+	//KLog_U1("ScreenMY:",ScreenMY);
 	//--------------------------------------
-	KLog("---------------");
+	//KLog("---------------");
 	
 	padtipo=JOY_getPortType(PORT_1);//13 = 
 	//padtipo=15;//NINGUNO

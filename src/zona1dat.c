@@ -77,6 +77,26 @@ const u16 const blxpri_3[] = {
 	671,271 //6,7 Pared >>
 };
 
+//cordenas de la grilla 32x32 para indicar Numero de Zona a teletransportar
+const u8 const puertas_0[] = {
+	3,7,4,1,3,0 //Puerta [1] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+};
+
+const u8 const puertas_1[] = {
+	3,0,3,0,3,7,//Puerta [1] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+	3,7,4,2,9,0 //Puerta [2] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+};
+
+const u8 const puertas_2[] = {
+	9,0,3,1,3,7,//Puerta [1] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+	9,15,4,3,9,0 //Puerta [2] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+};
+
+const u8 const puertas_3[] = {
+	9,0,3,2,9,15,//Puerta [1] cord_origen: x,y,pdircm, num_zone_dest,cord_dest: 0,1,2
+};
+
+
 
 const t_zona zona1dat[TOP_ZONAS] = {
   {
@@ -84,19 +104,22 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	2,//musica
 	8,//Xtop
 	5,//Ytop
-    casillas_0,//casillas /* 0 = null*/
+    casillas_0,//casillas
 	0,//top_blxpri
-	0 //blockpri
+	0,//blockpri
+	1,//topPuertas
+	puertas_0 //puertas
   },
   {
 	TRUE, //PlanA
-	2, //musica
+	2,//musica
 	8,//Xtop
 	5,//Ytop
     casillas_1,//casillas
 	9, //top_blxpri
-	blxpri_0 //blockpri
-	
+	blxpri_0,//blockpri
+	2,//topPuertas
+	puertas_1 //puertas
   },
   {
 	FALSE, //PlanA
@@ -105,18 +128,20 @@ const t_zona zona1dat[TOP_ZONAS] = {
 	11,//Ytop
     casillas_2,//casillas
 	3, //top_blxpri
-	blxpri_2  //blockpri
-	
+	blxpri_2, //blockpri
+	2,//topPuertas
+	puertas_2 //puertas
   },
   {
 	TRUE, //PlanA
-	0, //musica
+	1, //musica
 	16,//Xtop
 	11,//Ytop
     casillas_3,//casillas
 	6, //top_blxpri
-	blxpri_3  //blockpri
-	
+	blxpri_3, //blockpri
+	1,
+	puertas_3
   }
 };
 
