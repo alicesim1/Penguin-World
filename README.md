@@ -11,8 +11,8 @@ Plataforma: **SEGA Mega Drive/Genesis**
 
 **+4 Zonas de pruebas** in game , aun en desarrollo:
 
-![Test Zone 2](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona2.jpg)
-![Test Zone 4](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona4.jpg)
+![Test Zone 2](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona2.JPG)
+![Test Zone 4](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona4.JPG)
 
 Características de prioridad entre planos A/B con el jugador.(Zonas 2,3,4)
 
