@@ -59,8 +59,9 @@ void main(u16 hard){
 	
 	JOY_setEventHandler(&inputHandler);
 	
-	//TITUTLO();
+	TITUTLO();
 	
+	//PAL_setColors(0,palette_black,64,CPU);
 	ZoneMap();
 	
 }
@@ -102,12 +103,12 @@ void inputHandler(u16 joy, u16 state, u16 changed){
 		BUTTONS[4]=changed & BUTTON_RIGHT;
 		
 		BUTTONS[8]=changed & BUTTON_START;
-		if(pad6==1){
+		//if(pad6==1){
 			BUTTONS[9]=changed & BUTTON_X;
 			BUTTONS[10]=changed & BUTTON_Y;
 			BUTTONS[11]=changed & BUTTON_Z;
 			BUTTONS[12]=changed & BUTTON_MODE;
-		}
+		//}
 	}
 	
 	BUTTONS[5]=changed & BUTTON_A;//Boton Central

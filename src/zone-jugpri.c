@@ -71,8 +71,6 @@ Sprite* cursorsp; //atributo tipo Sprite
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
 	
-	PAL_setColors(0,palette_black,64,DMA);
-	
 	old_musica=0;
 	ZONA_NUM=0;
 	
@@ -87,15 +85,15 @@ void ZoneMap(){
 	//----------------------------------------------
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
-	
 	memcpy(&paleta64[32],&palette_green, 16 * 2);
 	memcpy(&paleta64[48],&palette_blue, 16 * 2);
+	
+	
+	SPR_init();
 	
 	JUGmueve=FALSE;
 	panim=3;
 	jugpri=jugpricpy=TRUE;
-	
-	SPR_init();
 	
 	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-16,TILE_ATTR(1,jugpri,0,0));
 	//pdirc=pdircm=1;//up+>>
@@ -113,9 +111,6 @@ void ZoneMap(){
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
-	
-	
-	
 	bool gat=TRUE;
 	
 	if(padraton==PORT_TYPE_MOUSE){ 
@@ -130,7 +125,7 @@ void ZoneMap(){
 	
     while(1){//LOOP BASICO(NUNCA SE SALE!)
 		
-		loadzona();
+		loadzona();//SYS_doVBlankProcess(); X 4 / 8
 		
 		/*VDP_drawInt(ZONA_NUM,0,0,ScreenY);
 		if(zona1dat[ZONA_NUM].topPuertas>0){
@@ -149,8 +144,10 @@ void ZoneMap(){
 			play_music(zona1dat[ZONA_NUM].musica);
 		}
 		
+		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
-		PAL_fadeInAll(paleta64,20,FALSE);
+		
+		PAL_fadeInAll(paleta64,20,FALSE);//espera el fade
 		
 		PUERTA_SAL=FALSE;
 		do{
@@ -177,20 +174,21 @@ void ZoneMap(){
 			
 		}while(!PUERTA_SAL);
 		
-		PAL_fadeOutAll(20,TRUE);
+		PAL_fadeOutAll(20,TRUE);//transicion fade
 		do{
 			jugpenguin();
 			
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
-		}while(PAL_isDoingFade());
+		}while(PAL_isDoingFade());//ya no hay fade
 		
 		
 		/*for(u8 i=0; i<4; i++){
 			SPR_releaseSprite(object2D[i].sprt);
-		}*/
+		}
 		
-		/*SPR_releaseSprite(object2D[0].sprt);
+		
+		SPR_releaseSprite(object2D[0].sprt);
 		SPR_releaseSprite(object2D[1].sprt);
 		SPR_releaseSprite(object2D[2].sprt);
 		SPR_releaseSprite(object2D[3].sprt);
@@ -208,14 +206,6 @@ void ZoneMap(){
 
 
 static void SPR_PRIORITY(){
-	
-	//-----------------------------------------------------------
-	/*for(u8 i=0;i<3;i++){
-		SPR_setPosition(object2D[i].sprt,object2D[i].x-posX,object2D[i].y-posY);
-	}*/
-	
-	//SPR_setDepth(penguinsp,-posY); 
-	
 	
 	///////////////////////////////////////////////////
 	
@@ -364,6 +354,7 @@ static void jugpenguin(){
 			
 			jug2diso();
 			pintarAB();
+			
 			SPR_PRIORITY();
 			
 			//KLog_U2("PX:", PX," PY:", PY);
@@ -393,7 +384,7 @@ static void pintarfULLAB(){
 	MAP_scrollTo(bgb,posX,posY);
 	SYS_doVBlankProcess();SYS_doVBlankProcess();
 	if(zona1dat[ZONA_NUM].PlanA){
-		MAP_scrollTo(bga,posX,posY);
+		MAP_scrollTo(bga,posX,posY);	
 		SYS_doVBlankProcess();SYS_doVBlankProcess();
 	}
 }
@@ -401,37 +392,31 @@ static void pintarfULLAB(){
 static void loadzona(){
 	
 	VDP_clearPlane(BG_B,TRUE);VDP_clearPlane(BG_A,TRUE);
+	//Limpiar el plano especificado (usando DMA).
 	
 	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
 	paleta64[0]=0;//colro de fondo 100% -Negro
 	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
 	
-	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,DMA);
+	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,CPU);
 	bgb=MAP_create(zona1[ZONA_NUM],BG_B,1);
 	if(zona1dat[ZONA_NUM].PlanA){ 
 		u8 ind=1+zona1[ZONA_NUM]->tileset->numTile;
-		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,DMA);
+		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
 		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO A SIEMPRE PRIORIDAD ALTA!
 	}
 
 	//Pintado del mapa por completo
-	posX=posY=0;
-	pintarfULLAB();
+	
+	pintarfULLAB();//pintado completo 1º vez.
+	
 	//8x4=32(la mitad de una casilla) * casillas) -32(fix sprite ancho)
 	STARTXT=(32*zona1dat[ZONA_NUM].Ytop)-32;
-	
 	jug2diso();
-	pintarfULLAB();
 	
-	SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
-	
-	//-------------------------------------------
-	/*for(u8 i=1;i<4;i++){
-		object2D_maker(penguin,i-1,i,32*(i+2),32*(i+2),0,randU8(0,1));
-	}*/
-	//--------------------------------------------
+	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
 	
 	SPR_PRIORITY();
-	
+		
 }
 

@@ -4,7 +4,7 @@
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
 #include "../inc/global.h"
-#define Version "1/7"
+#define Version "4/7"
 
 //res ficheros
 #include "../res/logos.h"
@@ -24,9 +24,9 @@ static void Titulo_scrollLine();
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void TITUTLO(){	
 	//--------------------------------------
-	VDP_loadFont(&font1,DMA);
+	VDP_loadFont(&font1,CPU);
 	
-	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6+IS_PALSYSTEM,TRUE,TRUE);
+	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6+IS_PALSYSTEM,TRUE,CPU);
 	JOY_waitPressBtnTime(900);
 	VDP_clearPlane(BG_B,TRUE);
 	
@@ -37,6 +37,8 @@ void TITUTLO(){
 	if(BUTTONS[0]==0) SGDKlogo();
 	if(BUTTONS[0]==0) ALICESIM1();
 	
+	
+	//PAL_setColors(0,palette_black,64,DMA);
 	//-------------------------------------------------------------
 	VDP_setScrollingMode(HSCROLL_LINE,VSCROLL_PLANE);//titulo
 	
@@ -46,11 +48,11 @@ void TITUTLO(){
 	memcpy(&paleta64[48],&palette_red, 16 * 2);
 	
 	//carga la imagen en VRAM y la dibuja en pantalla
-	VDP_drawImageEx(BG_B,&fondogr,TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,1),0,16+(IS_PALSYSTEM*2),FALSE,TRUE);
+	VDP_drawImageEx(BG_B,&fondogr,TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,1),0,16+(IS_PALSYSTEM*2),FALSE,CPU);
 	//incrementa ind para 'apuntar' a una zona de VRAM libre para futuras tiles
 	u16 ind=1+fondogr.tileset->numTile;
 	
-	VDP_drawImageEx(BG_A,&titulo,ind,4,1+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_A,&titulo,ind,4,1+IS_PALSYSTEM,FALSE,CPU);
 	ind+=titulo.tileset->numTile;
 	
 	bool gat2=FALSE;
@@ -77,14 +79,14 @@ void TITUTLO(){
 	Titulo_scrollLine();
 	if(BUTTONS[0]>9){
 		PAL_interruptFade();
-		PAL_setColors(0,&paleta64[0],64,DMA);//restaura las paletas
+		PAL_setColors(0,&paleta64[0],64,CPU);//restaura las paletas
 	}
-	PAL_setPalette(2,palette_black,DMA);
+	PAL_setPalette(2,palette_black,CPU);
 	
-	VDP_drawImageEx(BG_B,&titush,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),3,IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_B,&titush,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),3,IS_PALSYSTEM,FALSE,CPU);
 	ind+=titulo.tileset->numTile;
 	
-	VDP_drawImageEx(BG_A,&sgdk,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),31,24+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_A,&sgdk,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),31,24+IS_PALSYSTEM,FALSE,CPU);
 	
 	VDP_setTextPalette(PAL2);
 	VDP_drawText("Power By",31,23+IS_PALSYSTEM);
@@ -122,14 +124,14 @@ void TITUTLO(){
 		
 		if (gat3){ gat3=FALSE;
 			vectorB[0]=0;
-			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,DMA);
+			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,CPU);
 		}
 		
 		contador2--;
 		if(contador2==0){ contador2=randU8(1,25);
 			vectorB[0]=randU8(0,10)-5;
 			num_lin=randU8(10,112);
-			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,DMA);
+			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,CPU);
 			gat3=TRUE;
 		}
 		
@@ -147,14 +149,13 @@ void TITUTLO(){
 	VDP_setTextPalette(PAL0);
 	VDP_setScrollingMode(HSCROLL_PLANE,VSCROLL_PLANE);
 	
-	XGM_stopPlay();SYS_doVBlankProcess();//necesita VSync para parar la musica por completo
-	
+	XGM_stopPlay();
 	
 }
 
 
 static void Titulo_scrollLine(){
-	for(u8 num_lin=9;num_lin<120;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,2,DMA);
+	for(u8 num_lin=9;num_lin<128;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,DMA);
 }
 
 static void SEGALOGO(){
