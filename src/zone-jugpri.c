@@ -71,11 +71,11 @@ Sprite* cursorsp; //atributo tipo Sprite
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
 	
-	old_musica=0;
-	ZONA_NUM=0;
+	//old_musica=0;
 	
-	//PX=32*1;PY=32*7; // casillas_2 11 x 16
-	PX=32*3;PY=32*3; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
+	ZONA_NUM=3;
+	PX=PY=32;
+	//PX=32*0;PY=32*0; 
 	
 	//--------------------------------------
 	
@@ -95,7 +95,7 @@ void ZoneMap(){
 	panim=3;
 	jugpri=jugpricpy=TRUE;
 	
-	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-16,TILE_ATTR(1,jugpri,0,0));
+	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,0,0));
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//down+<<
@@ -139,10 +139,10 @@ void ZoneMap(){
 		KLog_S2("posX:", posX," posY:", posY);
 		KLog("----");*/
 		
-		if(zona1dat[ZONA_NUM].musica!=old_musica){
+		/*if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
 			play_music(zona1dat[ZONA_NUM].musica);
-		}
+		}*/
 		
 		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
@@ -233,7 +233,7 @@ static void SPR_PRIORITY(){
 //Calculo de jugador a isometrico
 static void jug2diso(){ //PX->posX
 	posX= STARTXT +   PX - PY;
-	posY= fixAlturaY + ((PX + PY)>>1);
+	posY= 8 - ScreTile8 + ((PX + PY)>>1);
 }
  
 static void jugpenguin(){
@@ -307,9 +307,9 @@ static void jugpenguin(){
 		
 		switch(pdircm){
 		case 1:
-			if(PY>0){ 
+			if(PY>0){ //solo camina si estamos dentro en cordenadas
 				PY-=VELPING;
-				if(PY>15){ 
+				if(PY>15){ //comprueba si es superior +15 pixeles
 					PY32--;
 					//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
 					if(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)]!=1 && PY-(PY32*32)<32) PY=PYC;
@@ -317,10 +317,14 @@ static void jugpenguin(){
 			}
 		break;
 		case 2:
-			PY+=VELPING;
-			PY32++;
-			//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
-			if(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)]!=1 && (PY32*32)-PY<32) PY=PYC;
+			if(PY<zona1dat[ZONA_NUM].Ytop<<5){ //evita extraño bug //0,0,0,B,0,0
+				PY+=VELPING;
+				if(PY<(zona1dat[ZONA_NUM].Ytop<<5)-15){ 
+					PY32++;
+					//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+					if(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)]!=1 && (PY32*32)-PY<32) PY=PYC;
+				}
+			}
 		break;
 		case 3:
 			if(PX>0){ 
@@ -333,10 +337,14 @@ static void jugpenguin(){
 			}
 		break;
 		case 4:
-			PX+=VELPING;
-			PX32++;
-			//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
-			if(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)]!=1 && (PX32*32)-PX<32) PX=PXC;
+			if(PX<(zona1dat[ZONA_NUM].Xtop-1)<<5){ 
+				PX+=VELPING;
+				if(PX<((zona1dat[ZONA_NUM].Xtop-1)<<5)-15){ 
+					PX32++;
+					//VDP_drawInt(zona1dat[0].casillas[PX32+(PY32*8)],0,2,27);
+					if(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)]!=1 && (PX32*32)-PX<32) PX=PXC;
+				}
+			}
 		}
 		
 		//VDP_drawInt(PX32,2,10,26);VDP_drawInt(PY32,2,12,26);
@@ -411,7 +419,7 @@ static void loadzona(){
 	pintarfULLAB();//pintado completo 1º vez.
 	
 	//8x4=32(la mitad de una casilla) * casillas) -32(fix sprite ancho)
-	STARTXT=(32*zona1dat[ZONA_NUM].Ytop)-32;
+	STARTXT=(32*zona1dat[ZONA_NUM].Ytop);//+-32;
 	jug2diso();
 	
 	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa

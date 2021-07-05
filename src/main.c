@@ -32,7 +32,6 @@ void main(u16 hard){
 	//KLog_S1("fixAlturaY:",fixAlturaY);
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
-	fixAlturaY=-24-ScreTile8;//-24/-32
 	
 	//KLog_U1("ScreenTY:",ScreenTY);
 	//KLog_U1("ScreenMY:",ScreenMY);
@@ -59,14 +58,14 @@ void main(u16 hard){
 	
 	JOY_setEventHandler(&inputHandler);
 	
-	TITUTLO();
+	//TITUTLO();
 	
 	//PAL_setColors(0,palette_black,64,CPU);
 	ZoneMap();
 	
 }
 
-
+/*
 void play_music(u8 indice){
 	switch(indice){
 		case 1:XGM_startPlay(M_titulo);break;
@@ -74,6 +73,7 @@ void play_music(u8 indice){
 		default: XGM_stopPlay();
 	}
 }
+*/
 
 //https://github.com/diegomtassis/yamd-library/blob/master/src/fwk/commons.c#L40
 u8 randU8(u8 lower, u8 higher) {

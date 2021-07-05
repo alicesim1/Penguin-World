@@ -1,14 +1,13 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
 //------------------------------------------------------------------------------------------
-#include "../res/basicos.h"//fuente, pinguno jug,
-#include "../res/musica.h"
+#include "../res/basicos.h"//fuente, pinguno jug, cursor,
+//#include "../res/musica.h"
 //-----------------------------------------------
 
 u8 ScreenY;		//27/29
 u8 ScreenMY;	//112/120
 u8 ScreenTY;	//224/240
-s8 fixAlturaY;	//-24/-32
 u8 ScreTile8; 	//0/8
 
 u8 padtipo;		//JOY_getPortType(PORT_1);
@@ -29,16 +28,16 @@ void _JOYupdateMouse ();
 char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);
 
-void play_music(u8);
+//void play_music(u8);
 
 u8 randU8(u8,u8);
 
 u16 paleta64[64];
 
-void TITUTLO();
+//void TITUTLO();
 void ZoneMap();
 
-u8 old_musica;
+//u8 old_musica;
 //-----------------------------------
 typedef struct {
   const bool const PlanA;
