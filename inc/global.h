@@ -2,7 +2,7 @@
 #define _GLOBAL_H
 //------------------------------------------------------------------------------------------
 #include "../res/basicos.h"//fuente, pinguno jug, cursor,
-//#include "../res/musica.h"
+//#include "../res/musica.h" //toda coleccion de musicas vgm
 //-----------------------------------------------
 
 u8 ScreenY;		//27/29
@@ -15,7 +15,8 @@ u8 pad6;		//JOY_getJoypadType(JOY_1);
 u8 padraton;	//JOY_getPortType(PORT_2);
 
 u16 BUTTONS[13];
-
+bool gat;
+	
 s16 readedX;
 s16 readedY;
 Vect2D_s16 joypos;
@@ -29,6 +30,7 @@ char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);
 
 //void play_music(u8);
+//u8 old_musica;
 
 u8 randU8(u8,u8);
 
@@ -37,7 +39,9 @@ u16 paleta64[64];
 //void TITUTLO();
 void ZoneMap();
 
-//u8 old_musica;
+
+
+
 //-----------------------------------
 typedef struct {
   const bool const PlanA;

@@ -15,8 +15,7 @@ const MapDefinition* const zona1b[] = {0,&z1h1b,0,&z1h3b};
 Map* bga; //PLANO A (Capa superior Prioridad Alta)
 //-----------------------------------------------------------
 
-bool move_scroll;
-s16 posX,posY;
+u16 posX,posY;
 u16 TopXMap,TopYMap;
 u16 posXt,posYt;
 
@@ -32,21 +31,23 @@ bool PUERTA_SAL;
 u16 STARTXT;
 
 
+static void dialogo(u16,u16);
+
 //---------------------------------------------------------
 // DATA
 //---------------------------------------------------------
-const u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
+//const u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
 
 //------------------------------------------------------------------------------------------
 
 Sprite* penguinsp; //atributo tipo Sprite
-const u8 VELPING=2;
+bool JUGmueve;
+const u8 const VELPING=2;
 s16 PX,PY;
 u8 PX32,PY32,PX32C,PY32C;//BLOQUES *32
 bool pflag;
 u8 pdirc,pdir,pdircm;
 u8 panim;
-bool JUGmueve;
 bool jugpri,jugpricpy;
 
 static void jug2diso();
@@ -54,42 +55,33 @@ static void jugpenguin();
 
 //------------------------------------------------------------------------------------------
 
-/*#define top_object2D 3
-struct t_object2D {
-	Sprite* sprt;
-	u16 x, y;
-};
-struct t_object2D object2D[top_object2D];
-//------------------------------------------------------------------------------------------
-static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , bool );
-*/
 //--------------------------------------------------------------------------------------------
+Sprite* dig_marcoF;
+Sprite* dig_marcoD;
 
+//Sprite* dig_marcoX[1];
+//Sprite* dig_marcoY[1];
 
 Sprite* cursorsp; //atributo tipo Sprite
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
-	
 	//old_musica=0;
 	
 	ZONA_NUM=3;
 	PX=PY=32;
 	//PX=32*0;PY=32*0; 
 	
-	//--------------------------------------
-	
-	//VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
-	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
-	
 	//----------------------------------------------
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
-	memcpy(&paleta64[32],&palette_green, 16 * 2);
-	memcpy(&paleta64[48],&palette_blue, 16 * 2);
+	//memcpy(&paleta64[32],&palette_green, 16 * 2);
+	//memcpy(&paleta64[48],&palette_blue, 16 * 2);
 	
 	
 	SPR_init();
+	
+	VDP_drawInt(spriteVramSize,0,0,ScreenY);
 	
 	JUGmueve=FALSE;
 	panim=3;
@@ -111,15 +103,15 @@ void ZoneMap(){
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
-	bool gat=TRUE;
 	
 	if(padraton==PORT_TYPE_MOUSE){ 
 		_JOYsetXY(160,ScreenMY);
-		cursorsp=SPR_addSprite(&cursor,joypos.x,joypos.y,TILE_ATTR(0,1,0,0));
-		SPR_setDepth(cursorsp,SPR_MIN_DEPTH);
+		cursorsp=SPR_addSprite(&cursor,joypos.x,joypos.y,TILE_ATTR(0,TRUE,0,0));
+		SPR_setDepth(cursorsp,SPR_MIN_DEPTH);//SIEMPRE SE VERA POR ENCIMA DE TODO Y DE PLANOS
+		
 	}
 	
-	SYS_showFrameLoad(TRUE);
+	SYS_showFrameLoad(TRUE);//Sprite 0: prioridad maxima, tile nº: 1534, pal 0
 	
 	PUERTA_SAL=TRUE;
 	
@@ -127,12 +119,7 @@ void ZoneMap(){
 		
 		loadzona();//SYS_doVBlankProcess(); X 4 / 8
 		
-		/*VDP_drawInt(ZONA_NUM,0,0,ScreenY);
-		if(zona1dat[ZONA_NUM].topPuertas>0){
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[1],0,0,ScreenY-2);
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[0],0,2,ScreenY-2);
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[2],0,5,ScreenY-2);
-		}*/
+		//VDP_drawInt(ZONA_NUM,0,0,ScreenY);
 		
 		/*KLog("start");
 		KLog_U2("PX:", PX," PY:", PY);
@@ -149,28 +136,32 @@ void ZoneMap(){
 		
 		PAL_fadeInAll(paleta64,20,FALSE);//espera el fade
 		
+		gat=TRUE;
 		PUERTA_SAL=FALSE;
+		
 		do{
 			
 			jugpenguin();
 			
+			
 			if(!gat){
-				/*if(BUTTONS[7]){ gat=TRUE;
+				if(BUTTONS[6] && !JUGmueve){ gat=TRUE;
 					
-				}*/
+					dialogo(160-112,ScreenMY-32);
+					
+				}
 			}else if(!BUTTONS[0]) gat=FALSE;
+			
+			
 			
 			if(padraton==PORT_TYPE_MOUSE){
 				_JOYupdateMouse();
 				SPR_setPosition(cursorsp,joypos.x,joypos.y);
 			}
 			
-			
 			//VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
-			
-			if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
 			
 		}while(!PUERTA_SAL);
 		
@@ -183,16 +174,7 @@ void ZoneMap(){
 		}while(PAL_isDoingFade());//ya no hay fade
 		
 		
-		/*for(u8 i=0; i<4; i++){
-			SPR_releaseSprite(object2D[i].sprt);
-		}
 		
-		
-		SPR_releaseSprite(object2D[0].sprt);
-		SPR_releaseSprite(object2D[1].sprt);
-		SPR_releaseSprite(object2D[2].sprt);
-		SPR_releaseSprite(object2D[3].sprt);
-		*/
 		
 		MEM_free(bgb);
 		if(zona1dat[ZONA_NUM].PlanA) MEM_free(bga);
@@ -203,6 +185,95 @@ void ZoneMap(){
     }
 }
 
+
+static void dialogo(u16 x,u16 y){
+	
+	VDP_drawText("Dialogo",0,ScreenY);
+	
+	PAL_setColors(32,dig_marco1.palette->data,8,CPU);
+	
+	dig_marcoF=SPR_addSprite(&dig_marco1,x,y,TILE_ATTR(2,TRUE,0,0));
+	SPR_setDepth(dig_marcoF,SPR_MIN_DEPTH+2);//-32766
+	
+	dig_marcoD=SPR_addSprite(&dig_marco2,x+16,y+16,TILE_ATTR(2,TRUE,0,0));
+	SPR_setDepth(dig_marcoD,SPR_MIN_DEPTH+2);//-32766
+	
+	
+	/*dig_marcoX[0]=SPR_addSprite(&dig_marco2,x+24,y,TILE_ATTR(2,TRUE,0,0));
+	SPR_setDepth(dig_marcoX[0],SPR_MIN_DEPTH+2);
+	
+	dig_marcoY[0]=SPR_addSprite(&dig_marco3,x,y+24,TILE_ATTR(2,TRUE,0,0));
+	SPR_setDepth(dig_marcoY[0],SPR_MIN_DEPTH+2);
+	*/
+	
+	
+	SPR_update();
+	do{
+		if(gat && !BUTTONS[6]) gat=FALSE;
+		SYS_doVBlankProcess();
+	}while(!BUTTONS[6] || gat);	gat=TRUE;
+	
+	SPR_releaseSprite(dig_marcoF);
+	SPR_releaseSprite(dig_marcoD);
+	/*SPR_releaseSprite(dig_marcoX[0]);
+	SPR_releaseSprite(dig_marcoY[0]);*/
+	
+	VDP_clearText(0,ScreenY,7);
+}
+
+
+static void pintarAB(){	 //ingame al movernos con el jugador
+	MAP_scrollTo(bgb,posX,posY);
+	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
+}
+
+static void pintarfULLAB(){	//para pantallas de carga
+	
+	//DMA_setMaxQueueSize();
+	
+	MAP_scrollTo(bgb,posX,posY);
+	SYS_doVBlankProcess();SYS_doVBlankProcess();
+	if(zona1dat[ZONA_NUM].PlanA){
+		MAP_scrollTo(bga,posX,posY);
+		SYS_doVBlankProcess();SYS_doVBlankProcess();
+	}
+	
+	//DMA_setMaxQueueSizeToDefault();
+}
+
+static void loadzona(){
+	
+	VDP_clearPlane(BG_B,TRUE);VDP_clearPlane(BG_A,TRUE);
+	//Limpiar el plano especificado (usando DMA).
+	
+	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
+	paleta64[0]=0;//colro de fondo 100% -Negro
+	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
+	
+	//u16 ind=TILE_USERINDEX;
+	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,0,CPU);
+	bgb=MAP_create(zona1[ZONA_NUM],BG_B,0);
+	u16 ind = zona1[ZONA_NUM]->tileset->numTile;
+	
+	if(zona1dat[ZONA_NUM].PlanA){
+		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
+		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));	//PLANO A SIEMPRE PRIORIDAD ALTA!
+		//ind += zona1b[ZONA_NUM]->tileset->numTile;
+	}
+	
+	//Pintado del mapa por completo
+	pintarfULLAB();//pintado completo 1º vez.
+	
+	//8x4=32(la mitad de una casilla isometrica) * casillasY)
+	STARTXT=zona1dat[ZONA_NUM].Ytop*32;
+	jug2diso();
+	
+	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
+	
+	
+	SPR_PRIORITY();
+	
+}
 
 
 static void SPR_PRIORITY(){
@@ -382,49 +453,4 @@ static void jugpenguin(){
 }
 
 
-static void pintarAB(){	
-	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
-	MAP_scrollTo(bgb,posX,posY);
-	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
-}
-
-static void pintarfULLAB(){	
-	MAP_scrollTo(bgb,posX,posY);
-	SYS_doVBlankProcess();SYS_doVBlankProcess();
-	if(zona1dat[ZONA_NUM].PlanA){
-		MAP_scrollTo(bga,posX,posY);	
-		SYS_doVBlankProcess();SYS_doVBlankProcess();
-	}
-}
-
-static void loadzona(){
-	
-	VDP_clearPlane(BG_B,TRUE);VDP_clearPlane(BG_A,TRUE);
-	//Limpiar el plano especificado (usando DMA).
-	
-	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
-	paleta64[0]=0;//colro de fondo 100% -Negro
-	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
-	
-	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,CPU);
-	bgb=MAP_create(zona1[ZONA_NUM],BG_B,1);
-	if(zona1dat[ZONA_NUM].PlanA){ 
-		u8 ind=1+zona1[ZONA_NUM]->tileset->numTile;
-		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
-		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO A SIEMPRE PRIORIDAD ALTA!
-	}
-
-	//Pintado del mapa por completo
-	
-	pintarfULLAB();//pintado completo 1º vez.
-	
-	//8x4=32(la mitad de una casilla) * casillas) -32(fix sprite ancho)
-	STARTXT=(32*zona1dat[ZONA_NUM].Ytop);//+-32;
-	jug2diso();
-	
-	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
-	
-	SPR_PRIORITY();
-		
-}
 
