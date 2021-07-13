@@ -39,7 +39,7 @@ void TITUTLO(){
 	if(BUTTONS[0]==0) ALICESIM1();
 	
 	
-	//PAL_setColors(0,palette_black,64,DMA);
+	//PAL_setColors(0,palette_black,64,CPU);
 	//-------------------------------------------------------------
 	VDP_setScrollingMode(HSCROLL_LINE,VSCROLL_PLANE);//titulo
 	

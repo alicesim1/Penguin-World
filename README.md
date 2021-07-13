@@ -11,6 +11,8 @@ Plataforma: **SEGA Mega Drive/Genesis**
 
 **+4 Zonas de pruebas** in game , aun en desarrollo:
 
+**Sistema de cuadros de dialogos! Primera version Alpha Test**
+
 ![Test Zone 2](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona2.JPG)
 ![Test Zone 4](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/Zona4.JPG)
 
@@ -27,9 +29,14 @@ Resolucion vertical a 240p para PAL 50Hrz, 224 para NTSC(EEUU/JAP) 60Hrz (Difere
 ## Botones: ##
 **A + Start = Hard-Reset**
 
+**A = Test dialogo 1**
+**B = Test dialogo 2**
+**C = Test dialogo 3**
+
 
 ## SEGA Mouse##
-[[Puerto 2]] Opcionalmente!
+[[Puerto 2]] Opcionalmente! 
+[Tambien compatible con PAD3/6 botones]
 Se visualiza un cursor de color verde, que se puede controlar con el raton!
 Por el momento no tiene interacion con nada... esta en desarrollo y estudio.
 
@@ -47,5 +54,7 @@ Creado con [SGDK de Stephane](https://github.com/Stephane-D/SGDK)
 
 Redes sociales:
 https://twitter.com/Alice_Sim1
+
 https://www.twitch.tv/AliceSim1
+
 https://www.youtube.com/user/simulatorone/

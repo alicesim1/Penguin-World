@@ -29,7 +29,7 @@ static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , 
 
 	//ZoneMap() unloadmap
 		for(u8 i=0; i<4; i++){
-			SPR_releaseSprite(object2D[i].sprt);
+			SPR_releaseSprite(object2D[i].sprt); //advertencia compilador!!
 		}
 		
 		SPR_releaseSprite(object2D[0].sprt);
@@ -98,7 +98,9 @@ static void object2D_maker(SpriteDefinition sprited, u8 num_obj , u8 pal , u16 X
 	
 	
 	if(BUTTONS[8]){ gat=TRUE;
-		//jugcontrol++; if(jugcontrol==4) jugcontrol=0;
+		
+		jugcontrol++; if(jugcontrol==4) jugcontrol=0;
+		
 		JOY_reset();
 		padtipo=JOY_getPortType(PORT_1);//13 = 
 		//padtipo=15;//NINGUNO

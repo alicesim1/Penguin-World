@@ -30,9 +30,9 @@ bool PUERTA_SAL;
 
 u16 STARTXT;
 
+#define diag_ind 1200 //hex:4B0
 
-static void dialogo(u16,u16);
-
+static void dialogo(u16,u16,u8,u8);
 //---------------------------------------------------------
 // DATA
 //---------------------------------------------------------
@@ -55,14 +55,6 @@ static void jugpenguin();
 
 //------------------------------------------------------------------------------------------
 
-//--------------------------------------------------------------------------------------------
-Sprite* dig_marcoF;
-Sprite* dig_marcoD;
-
-//Sprite* dig_marcoX[1];
-//Sprite* dig_marcoY[1];
-
-Sprite* cursorsp; //atributo tipo Sprite
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
@@ -73,26 +65,32 @@ void ZoneMap(){
 	//PX=32*0;PY=32*0; 
 	
 	//----------------------------------------------
+	VDP_loadFont(&font2,CPU);VDP_setTextPalette(2);
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
+	memcpy(&paleta64[32],dig_marco1.palette->data,8*2);//16+8
+	
+	//PAL_setColors(32,dig_marco1.palette->data,8,CPU);
 	//memcpy(&paleta64[32],&palette_green, 16 * 2);
 	//memcpy(&paleta64[48],&palette_blue, 16 * 2);
 	
 	
 	SPR_init();
 	
-	VDP_drawInt(spriteVramSize,0,0,ScreenY);
+	//VDP_drawInt(spriteVramSize,0,0,ScreenY);
 	
 	JUGmueve=FALSE;
 	panim=3;
 	jugpri=jugpricpy=TRUE;
 	
-	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,0,0));
+	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),
+	0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	SPR_setVisibility(penguinsp,VISIBLE);
+	
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//down+<<
 	//pdirc=pdircm=3;//up+<<
-	
 	switch(pdircm){
 		case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}break;
 		case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}break;
@@ -104,27 +102,32 @@ void ZoneMap(){
 	SPR_setFrame(penguinsp,1);//parado
 	
 	
-	if(padraton==PORT_TYPE_MOUSE){ 
+	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD){ 
+		cursorsp=SPR_addSpriteEx(&cursor,160,ScreenMY,TILE_ATTR(0,TRUE,FALSE,FALSE),
+		0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
+		SPR_setVisibility(cursorsp,VISIBLE);
 		_JOYsetXY(160,ScreenMY);
-		cursorsp=SPR_addSprite(&cursor,joypos.x,joypos.y,TILE_ATTR(0,TRUE,0,0));
-		SPR_setDepth(cursorsp,SPR_MIN_DEPTH);//SIEMPRE SE VERA POR ENCIMA DE TODO Y DE PLANOS
-		
 	}
 	
-	SYS_showFrameLoad(TRUE);//Sprite 0: prioridad maxima, tile nº: 1534, pal 0
+	
+	//--------------------------------------------------
+	Sprite* SPRITE_TEMP[3];
+	SPRITE_TEMP[0]=SPR_addSpriteEx(&dig_marco1,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);	
+	SPRITE_TEMP[1]=SPR_addSpriteEx(&dig_marco2,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	SPRITE_TEMP[2]=SPR_addSpriteEx(&dig_marco3,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	SPR_update();//SPR_FLAG_AUTO_TILE_UPLOAD FUNCIONE! Volvado automatico de tileset de los sprites a la VRAM
+	for(u8 i=0;i<3;i++)	SPR_releaseSprite(SPRITE_TEMP[i]);
+	SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
+	
+	//--------------------------------------------------
+	
+	//SYS_showFrameLoad(TRUE);//Sprite 0: prioridad maxima, tile nº: 1534, pal 0
 	
 	PUERTA_SAL=TRUE;
 	
     while(1){//LOOP BASICO(NUNCA SE SALE!)
 		
 		loadzona();//SYS_doVBlankProcess(); X 4 / 8
-		
-		//VDP_drawInt(ZONA_NUM,0,0,ScreenY);
-		
-		/*KLog("start");
-		KLog_U2("PX:", PX," PY:", PY);
-		KLog_S2("posX:", posX," posY:", posY);
-		KLog("----");*/
 		
 		/*if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
@@ -134,7 +137,7 @@ void ZoneMap(){
 		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
 		
-		PAL_fadeInAll(paleta64,20,FALSE);//espera el fade
+		PAL_fadeInAll(paleta64,20,TRUE);
 		
 		gat=TRUE;
 		PUERTA_SAL=FALSE;
@@ -143,38 +146,36 @@ void ZoneMap(){
 			
 			jugpenguin();
 			
-			
-			if(!gat){
-				if(BUTTONS[6] && !JUGmueve){ gat=TRUE;
-					
-					dialogo(160-112,ScreenMY-32);
-					
+			if(PUERTA_SAL){
+				if(!PAL_isDoingFade()) PAL_fadeOutAll(20,TRUE);//transicion fade
+			}else{
+				if(!gat){
+					if(!JUGmueve){
+						if(BUTTONS[6]){ gat=TRUE;
+							dialogo(0,0,2,2);
+						}
+						
+						if(BUTTONS[5]){ gat=TRUE;
+							dialogo(160-((16+(32*4))/2),ScreenMY-((16+(32*2))/2),4,2);
+						}
+						
+						if(BUTTONS[7]){ gat=TRUE;
+							dialogo(160-((16+(32*6))/2),ScreenTY-(16+(32*2)),6,2);
+						}
+					}
+				}else if(!BUTTONS[0]) gat=FALSE;
+				
+				
+				if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD){
+					_JOYupdateMouse();
 				}
-			}else if(!BUTTONS[0]) gat=FALSE;
-			
-			
-			
-			if(padraton==PORT_TYPE_MOUSE){
-				_JOYupdateMouse();
-				SPR_setPosition(cursorsp,joypos.x,joypos.y);
 			}
 			
-			//VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
+			VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
 			
-		}while(!PUERTA_SAL);
-		
-		PAL_fadeOutAll(20,TRUE);//transicion fade
-		do{
-			jugpenguin();
-			
-			SPR_update();
-			SYS_doVBlankProcess(); // Renderizamos la pantalla
-		}while(PAL_isDoingFade());//ya no hay fade
-		
-		
-		
+		}while(!PUERTA_SAL || PAL_isDoingFade());
 		
 		MEM_free(bgb);
 		if(zona1dat[ZONA_NUM].PlanA) MEM_free(bga);
@@ -186,26 +187,57 @@ void ZoneMap(){
 }
 
 
-static void dialogo(u16 x,u16 y){
+static void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
+	if(ancho<1) ancho=1;
+	if(alto<1) alto=1;
 	
-	VDP_drawText("Dialogo",0,ScreenY);
+	u8 i;
+	Sprite* dig_marcoE[4];
+	Sprite* dig_marcoH[ancho];//superior
+	Sprite* dig_marcoV[alto];//izquierdaq
 	
-	PAL_setColors(32,dig_marco1.palette->data,8,CPU);
+	Sprite* dig_marcoHd[ancho];//abajo
+	Sprite* dig_marcoVd[alto];//derecho
 	
-	dig_marcoF=SPR_addSprite(&dig_marco1,x,y,TILE_ATTR(2,TRUE,0,0));
-	SPR_setDepth(dig_marcoF,SPR_MIN_DEPTH+2);//-32766
+	//-----------------------------------------------------------------
+	dig_marcoE[0]=SPR_addSpriteEx(&dig_marco1,x,y,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+	dig_marcoE[1]=SPR_addSpriteEx(&dig_marco1,x+8+(32*ancho),y,TILE_ATTR_FULL(2,TRUE,FALSE,TRUE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+	dig_marcoE[2]=SPR_addSpriteEx(&dig_marco1,x,y+8+(32*alto),TILE_ATTR_FULL(2,TRUE,TRUE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+	dig_marcoE[3]=SPR_addSpriteEx(&dig_marco1,x+8+(32*ancho),y+8+(32*alto),TILE_ATTR_FULL(2,TRUE,TRUE,TRUE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+	for(i=0;i<4;i++){
+		SPR_setVisibility(dig_marcoE[i],VISIBLE);SPR_setDepth(dig_marcoE[i],SPR_MIN_DEPTH+2);//-32766
+	}
 	
-	dig_marcoD=SPR_addSprite(&dig_marco2,x+16,y+16,TILE_ATTR(2,TRUE,0,0));
-	SPR_setDepth(dig_marcoD,SPR_MIN_DEPTH+2);//-32766
+	u16 x2;
+	u16 y2=y+8+(32*alto);
 	
+	for(i=0;i<ancho;i++){
+		x2=x+8+(32*i);
+		dig_marcoH [i]=SPR_addSpriteEx(&dig_marco2,x2,y ,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+		dig_marcoHd[i]=SPR_addSpriteEx(&dig_marco2,x2,y2,TILE_ATTR_FULL(2,TRUE,TRUE ,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+		SPR_setVisibility(dig_marcoH[i],VISIBLE);SPR_setDepth(dig_marcoH[i],SPR_MIN_DEPTH+2);//-32766	
+		SPR_setVisibility(dig_marcoHd[i],VISIBLE);SPR_setDepth(dig_marcoHd[i],SPR_MIN_DEPTH+2);//-32766
+	}
 	
-	/*dig_marcoX[0]=SPR_addSprite(&dig_marco2,x+24,y,TILE_ATTR(2,TRUE,0,0));
-	SPR_setDepth(dig_marcoX[0],SPR_MIN_DEPTH+2);
+	x2=x+8+(32*ancho);
+	for(i=0;i<alto;i++){
+		y2=y+8+(32*i);
+		dig_marcoV [i]=SPR_addSpriteEx(&dig_marco3,x ,y2,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+		dig_marcoVd[i]=SPR_addSpriteEx(&dig_marco3,x2,y2,TILE_ATTR_FULL(2,TRUE,FALSE,TRUE ,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
+		SPR_setVisibility(dig_marcoV[i],VISIBLE);SPR_setDepth(dig_marcoV[i],SPR_MIN_DEPTH+2);//-32766
+		SPR_setVisibility(dig_marcoVd[i],VISIBLE);SPR_setDepth(dig_marcoVd[i],SPR_MIN_DEPTH+2);//-32766
+	}
 	
-	dig_marcoY[0]=SPR_addSprite(&dig_marco3,x,y+24,TILE_ATTR(2,TRUE,0,0));
-	SPR_setDepth(dig_marcoY[0],SPR_MIN_DEPTH+2);
-	*/
-	
+	Sprite* dig_lienzo[ancho*alto];
+	u8 p=0;
+	for(u8 h=0;h<ancho;h++){
+		for(u8 v=0;v<alto;v++){
+			dig_lienzo[p]=SPR_addSpriteEx(&dig_marco4,x+8+(32*h),y+8+(32*v),TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4+4+(16*p)),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+			SPR_setVisibility(dig_lienzo[p],VISIBLE);SPR_setDepth(dig_lienzo[p],SPR_MIN_DEPTH+2);//-32766
+			p++;
+			//--------------------------------------------------------------------
+		}
+	}
 	
 	SPR_update();
 	do{
@@ -213,12 +245,14 @@ static void dialogo(u16 x,u16 y){
 		SYS_doVBlankProcess();
 	}while(!BUTTONS[6] || gat);	gat=TRUE;
 	
-	SPR_releaseSprite(dig_marcoF);
-	SPR_releaseSprite(dig_marcoD);
-	/*SPR_releaseSprite(dig_marcoX[0]);
-	SPR_releaseSprite(dig_marcoY[0]);*/
+	for(i=0;i<4;i++)	SPR_releaseSprite(dig_marcoE[i]);
 	
-	VDP_clearText(0,ScreenY,7);
+	for(i=0;i<ancho;i++)SPR_releaseSprite(dig_marcoH[i]);
+	for(i=0;i<ancho;i++)SPR_releaseSprite(dig_marcoHd[i]);
+	for(i=0;i<alto;i++) SPR_releaseSprite(dig_marcoV[i]);
+	for(i=0;i<alto;i++) SPR_releaseSprite(dig_marcoVd[i]);
+	
+	for(i=0;i<p;i++)	SPR_releaseSprite(dig_lienzo[i]);
 }
 
 

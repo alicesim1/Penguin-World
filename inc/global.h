@@ -14,14 +14,12 @@ u8 padtipo;		//JOY_getPortType(PORT_1);
 u8 pad6;		//JOY_getJoypadType(JOY_1);
 u8 padraton;	//JOY_getPortType(PORT_2);
 
-u16 BUTTONS[13];
+u16 BUTTONS[20];
 bool gat;
-	
-s16 readedX;
-s16 readedY;
+
+Sprite* cursorsp;
+s16 readedX,readedY;
 Vect2D_s16 joypos;
-
-
 void _JOYsetXY ( s16 x, s16 y );
 void _JOYupdateMouse ();
 
