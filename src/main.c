@@ -31,14 +31,14 @@ void main(u16 hard){
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
 	//--------------------------------------
- 
-	padtipo=JOY_getPortType(PORT_1);  JOY_setSupport(PORT_1,JOY_SUPPORT_6BTN);
+	JoyType=JOY_getJoypadType(JOY_1);
+	
 	padraton=JOY_getPortType(PORT_2);
 	if(padraton==PORT_TYPE_MOUSE) JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
-	else JOY_setSupport(PORT_1,JOY_SUPPORT_3BTN);
 	
-	SYS_doVBlankProcess(); // Necesario para detecte el JoypadType
-	pad6=JOY_getJoypadType(JOY_1);
+	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
+	else CursorON=FALSE;
+	
 	JOY_setEventHandler(&inputHandler);
 	
 	//TITUTLO();
@@ -87,7 +87,7 @@ void inputHandler(u16 joy, u16 state, u16 changed){
 		BUTTONS[7]=changed & BUTTON_C;//Boton Derecho
 	
 		BUTTONS[8]=changed & BUTTON_START;
-		if(pad6==1){
+		if(JoyType==JOY_TYPE_PAD6){
 			BUTTONS[9]=changed & BUTTON_X;
 			BUTTONS[10]=changed & BUTTON_Y;
 			BUTTONS[11]=changed & BUTTON_Z;

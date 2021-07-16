@@ -10,9 +10,10 @@ u8 ScreenMY;	//112/120
 u8 ScreenTY;	//224/240
 u8 ScreTile8; 	//0/8
 
-u8 padtipo;		//JOY_getPortType(PORT_1);
-u8 pad6;		//JOY_getJoypadType(JOY_1);
+u8 JoyType;		//JOY_getJoypadType(JOY_1); //JOY_TYPE_PAD6
 u8 padraton;	//JOY_getPortType(PORT_2);
+bool CursorON;
+
 
 u16 BUTTONS[20];
 bool gat;

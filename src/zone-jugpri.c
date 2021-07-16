@@ -30,7 +30,7 @@ bool PUERTA_SAL;
 
 u16 STARTXT;
 
-#define diag_ind 1200 //hex:4B0
+#define diag_ind 200 //hex:4B0
 
 static void dialogo(u16,u16,u8,u8);
 //---------------------------------------------------------
@@ -60,7 +60,7 @@ static void jugpenguin();
 void ZoneMap(){
 	//old_musica=0;
 	
-	ZONA_NUM=3;
+	ZONA_NUM=0;
 	PX=PY=32;
 	//PX=32*0;PY=32*0; 
 	
@@ -76,7 +76,6 @@ void ZoneMap(){
 	
 	
 	SPR_init();
-	
 	//VDP_drawInt(spriteVramSize,0,0,ScreenY);
 	
 	JUGmueve=FALSE;
@@ -102,10 +101,10 @@ void ZoneMap(){
 	SPR_setFrame(penguinsp,1);//parado
 	
 	
-	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD){ 
+	if(CursorON){ 
 		cursorsp=SPR_addSpriteEx(&cursor,160,ScreenMY,TILE_ATTR(0,TRUE,FALSE,FALSE),
 		0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
-		SPR_setVisibility(cursorsp,VISIBLE);
+		SPR_setVisibility(cursorsp,HIDDEN);
 		_JOYsetXY(160,ScreenMY);
 	}
 	
@@ -142,17 +141,24 @@ void ZoneMap(){
 		gat=TRUE;
 		PUERTA_SAL=FALSE;
 		
+		if(CursorON) SPR_setVisibility(cursorsp,VISIBLE);
+		
 		do{
 			
 			jugpenguin();
 			
 			if(PUERTA_SAL){
+				if(CursorON) SPR_setVisibility(cursorsp,HIDDEN);
 				if(!PAL_isDoingFade()) PAL_fadeOutAll(20,TRUE);//transicion fade
 			}else{
 				if(!gat){
 					if(!JUGmueve){
 						if(BUTTONS[6]){ gat=TRUE;
 							dialogo(0,0,2,2);
+						}
+						
+						if(BUTTONS[10]){ gat=TRUE;
+							dialogo(100,100,1,1);
 						}
 						
 						if(BUTTONS[5]){ gat=TRUE;
@@ -162,11 +168,15 @@ void ZoneMap(){
 						if(BUTTONS[7]){ gat=TRUE;
 							dialogo(160-((16+(32*6))/2),ScreenTY-(16+(32*2)),6,2);
 						}
+						
+						if(BUTTONS[9]){ gat=TRUE;
+							dialogo(160-((16+(32*8))/2),ScreenTY-(16+(32*2)),8,1);
+						}
 					}
 				}else if(!BUTTONS[0]) gat=FALSE;
 				
 				
-				if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD){
+				if(CursorON){
 					_JOYupdateMouse();
 				}
 			}
@@ -188,8 +198,6 @@ void ZoneMap(){
 
 
 static void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
-	if(ancho<1) ancho=1;
-	if(alto<1) alto=1;
 	
 	u8 i;
 	Sprite* dig_marcoE[4];
@@ -242,6 +250,12 @@ static void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
 	SPR_update();
 	do{
 		if(gat && !BUTTONS[6]) gat=FALSE;
+		if(CursorON){
+			_JOYupdateMouse();
+			SPR_update();
+		}
+		VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
+		
 		SYS_doVBlankProcess();
 	}while(!BUTTONS[6] || gat);	gat=TRUE;
 	
@@ -253,6 +267,7 @@ static void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
 	for(i=0;i<alto;i++) SPR_releaseSprite(dig_marcoVd[i]);
 	
 	for(i=0;i<p;i++)	SPR_releaseSprite(dig_lienzo[i]);
+	
 }
 
 
@@ -282,7 +297,7 @@ static void loadzona(){
 	
 	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
 	paleta64[0]=0;//colro de fondo 100% -Negro
-	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
+	//paleta64[15]=0xFFF;//color 15 (texo...) Blanco
 	
 	//u16 ind=TILE_USERINDEX;
 	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,0,CPU);
