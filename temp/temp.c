@@ -197,3 +197,9 @@ void play_music(u8 indice){
 }
 
 
+Sprite* DigCaracter;
+
+DigCaracter=SPR_addSpriteEx(&font16,-8,-16,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,ind+(4*i)),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+		SPR_setAnimAndFrame(DigCaracter,0,1+i);
+		SPR_update();//SPR_FLAG_AUTO_TILE_UPLOAD FUNCIONE! Deve estar VISIBLE! Volvado automatico de tileset de los sprites a la VRAM
+		SPR_releaseSprite(DigCaracter);

@@ -30,9 +30,7 @@ bool PUERTA_SAL;
 
 u16 STARTXT;
 
-#define diag_ind 200 //hex:4B0
 
-static void dialogo(u16,u16,u8,u8);
 //---------------------------------------------------------
 // DATA
 //---------------------------------------------------------
@@ -65,10 +63,9 @@ void ZoneMap(){
 	//PX=32*0;PY=32*0; 
 	
 	//----------------------------------------------
-	VDP_loadFont(&font2,CPU);VDP_setTextPalette(2);
+	//VDP_loadFont(&font2,CPU);VDP_setTextPalette(2);
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
-	memcpy(&paleta64[32],dig_marco1.palette->data,8*2);//16+8
 	
 	//PAL_setColors(32,dig_marco1.palette->data,8,CPU);
 	//memcpy(&paleta64[32],&palette_green, 16 * 2);
@@ -82,8 +79,7 @@ void ZoneMap(){
 	panim=3;
 	jugpri=jugpricpy=TRUE;
 	
-	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),
-	0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
 	SPR_setVisibility(penguinsp,VISIBLE);
 	
 	//pdirc=pdircm=1;//up+>>
@@ -102,21 +98,13 @@ void ZoneMap(){
 	
 	
 	if(CursorON){ 
-		cursorsp=SPR_addSpriteEx(&cursor,160,ScreenMY,TILE_ATTR(0,TRUE,FALSE,FALSE),
-		0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
+		cursorsp=SPR_addSpriteEx(&cursor,0,0,TILE_ATTR(0,TRUE,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
 		SPR_setVisibility(cursorsp,HIDDEN);
 		_JOYsetXY(160,ScreenMY);
 	}
 	
 	
 	//--------------------------------------------------
-	Sprite* SPRITE_TEMP[3];
-	SPRITE_TEMP[0]=SPR_addSpriteEx(&dig_marco1,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);	
-	SPRITE_TEMP[1]=SPR_addSpriteEx(&dig_marco2,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
-	SPRITE_TEMP[2]=SPR_addSpriteEx(&dig_marco3,0,0,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
-	SPR_update();//SPR_FLAG_AUTO_TILE_UPLOAD FUNCIONE! Volvado automatico de tileset de los sprites a la VRAM
-	for(u8 i=0;i<3;i++)	SPR_releaseSprite(SPRITE_TEMP[i]);
-	SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 	
 	//--------------------------------------------------
 	
@@ -136,7 +124,7 @@ void ZoneMap(){
 		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
 		
-		PAL_fadeInAll(paleta64,20,TRUE);
+		PAL_fadeInAll(paleta64,20,FALSE);
 		
 		gat=TRUE;
 		PUERTA_SAL=FALSE;
@@ -181,7 +169,7 @@ void ZoneMap(){
 				}
 			}
 			
-			VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
+			//VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
 			
@@ -195,81 +183,6 @@ void ZoneMap(){
 		
     }
 }
-
-
-static void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
-	
-	u8 i;
-	Sprite* dig_marcoE[4];
-	Sprite* dig_marcoH[ancho];//superior
-	Sprite* dig_marcoV[alto];//izquierdaq
-	
-	Sprite* dig_marcoHd[ancho];//abajo
-	Sprite* dig_marcoVd[alto];//derecho
-	
-	//-----------------------------------------------------------------
-	dig_marcoE[0]=SPR_addSpriteEx(&dig_marco1,x,y,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-	dig_marcoE[1]=SPR_addSpriteEx(&dig_marco1,x+8+(32*ancho),y,TILE_ATTR_FULL(2,TRUE,FALSE,TRUE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-	dig_marcoE[2]=SPR_addSpriteEx(&dig_marco1,x,y+8+(32*alto),TILE_ATTR_FULL(2,TRUE,TRUE,FALSE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-	dig_marcoE[3]=SPR_addSpriteEx(&dig_marco1,x+8+(32*ancho),y+8+(32*alto),TILE_ATTR_FULL(2,TRUE,TRUE,TRUE,diag_ind),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-	for(i=0;i<4;i++){
-		SPR_setVisibility(dig_marcoE[i],VISIBLE);SPR_setDepth(dig_marcoE[i],SPR_MIN_DEPTH+2);//-32766
-	}
-	
-	u16 x2;
-	u16 y2=y+8+(32*alto);
-	
-	for(i=0;i<ancho;i++){
-		x2=x+8+(32*i);
-		dig_marcoH [i]=SPR_addSpriteEx(&dig_marco2,x2,y ,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-		dig_marcoHd[i]=SPR_addSpriteEx(&dig_marco2,x2,y2,TILE_ATTR_FULL(2,TRUE,TRUE ,FALSE,diag_ind+1),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-		SPR_setVisibility(dig_marcoH[i],VISIBLE);SPR_setDepth(dig_marcoH[i],SPR_MIN_DEPTH+2);//-32766	
-		SPR_setVisibility(dig_marcoHd[i],VISIBLE);SPR_setDepth(dig_marcoHd[i],SPR_MIN_DEPTH+2);//-32766
-	}
-	
-	x2=x+8+(32*ancho);
-	for(i=0;i<alto;i++){
-		y2=y+8+(32*i);
-		dig_marcoV [i]=SPR_addSpriteEx(&dig_marco3,x ,y2,TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-		dig_marcoVd[i]=SPR_addSpriteEx(&dig_marco3,x2,y2,TILE_ATTR_FULL(2,TRUE,FALSE,TRUE ,diag_ind+1+4),0,SPR_FLAG_AUTO_SPRITE_ALLOC);
-		SPR_setVisibility(dig_marcoV[i],VISIBLE);SPR_setDepth(dig_marcoV[i],SPR_MIN_DEPTH+2);//-32766
-		SPR_setVisibility(dig_marcoVd[i],VISIBLE);SPR_setDepth(dig_marcoVd[i],SPR_MIN_DEPTH+2);//-32766
-	}
-	
-	Sprite* dig_lienzo[ancho*alto];
-	u8 p=0;
-	for(u8 h=0;h<ancho;h++){
-		for(u8 v=0;v<alto;v++){
-			dig_lienzo[p]=SPR_addSpriteEx(&dig_marco4,x+8+(32*h),y+8+(32*v),TILE_ATTR_FULL(2,TRUE,FALSE,FALSE,diag_ind+1+4+4+(16*p)),0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
-			SPR_setVisibility(dig_lienzo[p],VISIBLE);SPR_setDepth(dig_lienzo[p],SPR_MIN_DEPTH+2);//-32766
-			p++;
-			//--------------------------------------------------------------------
-		}
-	}
-	
-	SPR_update();
-	do{
-		if(gat && !BUTTONS[6]) gat=FALSE;
-		if(CursorON){
-			_JOYupdateMouse();
-			SPR_update();
-		}
-		VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
-		
-		SYS_doVBlankProcess();
-	}while(!BUTTONS[6] || gat);	gat=TRUE;
-	
-	for(i=0;i<4;i++)	SPR_releaseSprite(dig_marcoE[i]);
-	
-	for(i=0;i<ancho;i++)SPR_releaseSprite(dig_marcoH[i]);
-	for(i=0;i<ancho;i++)SPR_releaseSprite(dig_marcoHd[i]);
-	for(i=0;i<alto;i++) SPR_releaseSprite(dig_marcoV[i]);
-	for(i=0;i<alto;i++) SPR_releaseSprite(dig_marcoVd[i]);
-	
-	for(i=0;i<p;i++)	SPR_releaseSprite(dig_lienzo[i]);
-	
-}
-
 
 static void pintarAB(){	 //ingame al movernos con el jugador
 	MAP_scrollTo(bgb,posX,posY);
@@ -297,7 +210,7 @@ static void loadzona(){
 	
 	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
 	paleta64[0]=0;//colro de fondo 100% -Negro
-	//paleta64[15]=0xFFF;//color 15 (texo...) Blanco
+	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
 	
 	//u16 ind=TILE_USERINDEX;
 	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,0,CPU);

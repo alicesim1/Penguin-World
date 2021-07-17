@@ -1,7 +1,7 @@
 #ifndef _RES_BASICOS_H_
 #define _RES_BASICOS_H_
 
-extern const TileSet font2;
+extern const TileSet font16;
 extern const SpriteDefinition penguin;
 extern const SpriteDefinition cursor;
 extern const SpriteDefinition dig_marco1;

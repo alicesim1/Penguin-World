@@ -36,16 +36,16 @@ void main(u16 hard){
 	padraton=JOY_getPortType(PORT_2);
 	if(padraton==PORT_TYPE_MOUSE) JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
 	
-	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
-	else CursorON=FALSE;
+	CursorON=FALSE;
+	//if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
 	
 	JOY_setEventHandler(&inputHandler);
 	
 	//TITUTLO();
 	
 	
-	VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
-	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
+	//VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
+	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
 	
 	ZoneMap();
