@@ -188,13 +188,34 @@ If you find it easier you can also write it directly in binary, like so:
 	JOY_setEventHandler(&inputHandler);
 	
 	
-void play_music(u8 indice){
-	switch(indice){
-		case 1:XGM_startPlay(M_titulo);break;
-		case 2:XGM_startPlay(M_zone1);break;
-		default: XGM_stopPlay();
-	}
-}
+
+// unpack first
+	TileSet *t = unpackTileSet(&font16, NULL);
+	// tiles
+	VDP_loadTileData(t->tiles, index, t->numTile, tm);
+	
+MEM_free(t);
+
+
+KLog_U1("numTile:",font16.numTile);//384
+	
+	u32 tile[8]=
+	{
+		0x00111100,
+		0x01144110,
+		0x11244211,
+		0x11244211,
+		0x11222211,
+		0x11222211,
+		0x01122110,
+		0x00111100
+	};
+	
+	
+	VDP_loadTileData( (u32 *)tile, 199, 1, CPU);
+	VDP_loadTileSet(&font16,600,CPU);
+	
+
 
 
 Sprite* DigCaracter;

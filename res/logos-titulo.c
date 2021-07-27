@@ -4,7 +4,7 @@
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
 #include "../inc/global.h"
-#define Version "4/7"
+#define Version "26/07"
 
 //res ficheros
 #include "../res/logos.h"
@@ -156,16 +156,16 @@ void TITUTLO(){
 
 
 static void Titulo_scrollLine(){
-	for(u8 num_lin=9;num_lin<128;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,DMA);
+	for(u8 num_lin=9;num_lin<128;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,CPU);
 }
 
 static void SEGALOGO(){
 	
 	u16 paleta16or[16];
 	memcpy(&paleta16or[0],logosega.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black,DMA);
+	PAL_setPalette(0,palette_black,CPU);
 	
-	VDP_drawImageEx(BG_B,&logosega,1,20-6,14-2+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_B,&logosega,1,20-6,14-2+IS_PALSYSTEM,FALSE,CPU);
 	
 	for(u8 i=1;i<13;i++){
 		PAL_fadeIn(i,i,&paleta16or[i],3,TRUE);
@@ -175,7 +175,7 @@ static void SEGALOGO(){
 	PAL_fadeIn(14,15,&paleta16or[14],15,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(900);
-	else PAL_setPalette(PAL0,logosega.palette->data,DMA);
+	else PAL_setPalette(PAL0,logosega.palette->data,CPU);
 	
 	PAL_fadeOutAll(20,FALSE);
 	VDP_clearPlane(BG_B,TRUE);
@@ -186,14 +186,14 @@ static void SEGALOGO(){
 static void SGDKlogo(){
 	
 	u16 paleta16or[16];
-	memcpy(&paleta16or[0],sgdklogo.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black,DMA);
+	memcpy(&paleta16or[0],sgdk_logo.palette->data, 16 * 2);
+	PAL_setPalette(0,palette_black,CPU);
 	
-	VDP_drawImageEx(BG_B,&sgdklogo,1,20-4,14-4+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawBitmapEx(BG_B,&sgdk_logo,1,20-4,14-4+IS_PALSYSTEM,FALSE);
 	PAL_fadeIn(0,15,&paleta16or[0],10,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
-	else PAL_setPalette(PAL0,sgdklogo.palette->data,DMA);
+	else PAL_setPalette(PAL0,sgdk_logo.palette->data,CPU);
 	
 	PAL_fadeOutAll(20,FALSE);
 	VDP_clearPlane(BG_B,TRUE);
@@ -207,11 +207,11 @@ static void ALICESIM1(){
 	u16 paleta16or[16];
 	
 	memcpy(&paleta16or[0],alicesim1.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black,DMA);
-	PAL_setPalette(1,palette_grey,DMA);
+	PAL_setPalette(0,palette_black,CPU);
+	PAL_setPalette(1,palette_grey,CPU);
 	VDP_setTextPalette(PAL1);
 	
-	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-4+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-4+IS_PALSYSTEM,FALSE,CPU);
 	//Volvemos a activar las interrupciones del VDP
 	
 	u8 i;
@@ -231,7 +231,7 @@ static void ALICESIM1(){
 	}
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
-	else PAL_setPalette(0,paleta16or,DMA);
+	else PAL_setPalette(0,paleta16or,CPU);
 	
 	PAL_fadeOutAll(20,FALSE);
 	

@@ -56,24 +56,26 @@ static void jugpenguin();
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
-	//old_musica=0;
+	old_musica=0;
 	
 	ZONA_NUM=0;
 	PX=PY=32;
 	//PX=32*0;PY=32*0; 
 	
 	//----------------------------------------------
-	//VDP_loadFont(&font2,CPU);VDP_setTextPalette(2);
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
-	
-	//PAL_setColors(32,dig_marco1.palette->data,8,CPU);
-	//memcpy(&paleta64[32],&palette_green, 16 * 2);
+	memcpy(&paleta64[32],dig_marco1.palette->data,8*2);//16+8
 	//memcpy(&paleta64[48],&palette_blue, 16 * 2);
 	
 	
 	SPR_init();
-	//VDP_drawInt(spriteVramSize,0,0,ScreenY);
+	
+	Sprite* dig_temp[3];
+	dig_temp[0]=SPR_addSpriteEx(&dig_marco1,0,0,diag_ind,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	dig_temp[1]=SPR_addSpriteEx(&dig_marco2,0,0,diag_ind+1,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	dig_temp[2]=SPR_addSpriteEx(&dig_marco3,0,0,diag_ind+1+4,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	
 	
 	JUGmueve=FALSE;
 	panim=3;
@@ -81,7 +83,6 @@ void ZoneMap(){
 	
 	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
 	SPR_setVisibility(penguinsp,VISIBLE);
-	
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//down+<<
@@ -92,18 +93,21 @@ void ZoneMap(){
 		case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}break;
 		case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
 	}
-	
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
 	
 	if(CursorON){ 
-		cursorsp=SPR_addSpriteEx(&cursor,0,0,TILE_ATTR(0,TRUE,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
+		cursorsp=SPR_addSpriteEx(&cursor,160,ScreenMY,TILE_ATTR(0,TRUE,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
 		SPR_setVisibility(cursorsp,HIDDEN);
 		_JOYsetXY(160,ScreenMY);
 	}
 	
+	SPR_update();
 	
+	for(u8 i=0;i<3;i++)	SPR_releaseSprite(dig_temp[i]);
+	
+	SYS_doVBlankProcess();
 	//--------------------------------------------------
 	
 	//--------------------------------------------------
@@ -116,10 +120,10 @@ void ZoneMap(){
 		
 		loadzona();//SYS_doVBlankProcess(); X 4 / 8
 		
-		/*if(zona1dat[ZONA_NUM].musica!=old_musica){
+		if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
 			play_music(zona1dat[ZONA_NUM].musica);
-		}*/
+		}
 		
 		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
@@ -190,17 +194,12 @@ static void pintarAB(){	 //ingame al movernos con el jugador
 }
 
 static void pintarfULLAB(){	//para pantallas de carga
-	
-	//DMA_setMaxQueueSize();
-	
 	MAP_scrollTo(bgb,posX,posY);
 	SYS_doVBlankProcess();SYS_doVBlankProcess();
 	if(zona1dat[ZONA_NUM].PlanA){
 		MAP_scrollTo(bga,posX,posY);
 		SYS_doVBlankProcess();SYS_doVBlankProcess();
 	}
-	
-	//DMA_setMaxQueueSizeToDefault();
 }
 
 static void loadzona(){

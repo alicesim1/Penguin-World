@@ -41,15 +41,23 @@ void main(u16 hard){
 	
 	JOY_setEventHandler(&inputHandler);
 	
-	//TITUTLO();
+	TITUTLO();
 	
 	
-	//VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
+	//VDP_setWindowVPos(1,ScreenY);// 27max vertical Windows
 	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
-	PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
+	//PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
 	
 	ZoneMap();
 	
+}
+
+void play_music(u8 indice){
+	switch(indice){
+		case 1:XGM_startPlay(M_titulo);break;
+		case 2:XGM_startPlay(M_zone1);break;
+		default: XGM_stopPlay();
+	}
 }
 
 
