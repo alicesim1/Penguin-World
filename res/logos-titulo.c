@@ -4,7 +4,7 @@
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
 #include "../inc/global.h"
-#define Version "26/07"
+#define Version "30/07"
 
 //res ficheros
 #include "../res/logos.h"
@@ -91,7 +91,7 @@ void TITUTLO(){
 	
 	VDP_setTextPalette(PAL2);
 	VDP_drawText("Power By",31,23+IS_PALSYSTEM);
-	VDP_drawText(Version,36,0);
+	VDP_drawText(Version,35,0);//DD/MM
 	
 	VDP_setTextPalette(PAL3);VDP_drawText("AliceSim1",9,22+IS_PALSYSTEM);VDP_setTextPalette(PAL0);VDP_drawText("- 2020-2021",19,22+IS_PALSYSTEM);
 	VDP_drawText("Twitter:  @Alice_Sim1",9,24+IS_PALSYSTEM);

@@ -137,6 +137,12 @@ void dialogo(u16 x,u16 y,u8 ancho, u8 alto){
 	
 	gat=TRUE;
 	do{
+		
+		if(CursorON){
+			_JOYupdateMouse();
+			SPR_update();
+		}
+		
 		if(gat && !BUTTONS[6]) gat=FALSE;
 		SYS_doVBlankProcess();
 	}while(!BUTTONS[6] || gat);	gat=TRUE;

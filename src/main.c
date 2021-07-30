@@ -36,8 +36,8 @@ void main(u16 hard){
 	padraton=JOY_getPortType(PORT_2);
 	if(padraton==PORT_TYPE_MOUSE) JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
 	
-	CursorON=FALSE;
-	//if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
+	//CursorON=FALSE;
+	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
 	
 	JOY_setEventHandler(&inputHandler);
 	
