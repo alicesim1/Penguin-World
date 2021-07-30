@@ -1,8 +1,13 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
 //------------------------------------------------------------------------------------------
+<<<<<<< HEAD
 #include "../res/basicos.h"//fuente, pinguno jug,
 #include "../res/musica.h"
+=======
+#include "../res/basicos.h"//fuente, pinguno jug, cursor,
+#include "../res/musica.h" //toda coleccion de musicas vgm
+>>>>>>> Dialogo
 //-----------------------------------------------
 
 u8 ScreenY;		//27/29
@@ -11,17 +16,17 @@ u8 ScreenTY;	//224/240
 s8 fixAlturaY;	//-24/-32
 u8 ScreTile8; 	//0/8
 
-u8 padtipo;		//JOY_getPortType(PORT_1);
-u8 pad6;		//JOY_getJoypadType(JOY_1);
+u8 JoyType;		//JOY_getJoypadType(JOY_1); //JOY_TYPE_PAD6
 u8 padraton;	//JOY_getPortType(PORT_2);
+bool CursorON;
 
-u16 BUTTONS[13];
 
-s16 readedX;
-s16 readedY;
+u16 BUTTONS[20];
+bool gat;
+
+Sprite* cursorsp;
+s16 readedX,readedY;
 Vect2D_s16 joypos;
-
-
 void _JOYsetXY ( s16 x, s16 y );
 void _JOYupdateMouse ();
 
@@ -30,6 +35,10 @@ char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);
 
 void play_music(u8);
+<<<<<<< HEAD
+=======
+u8 old_musica;
+>>>>>>> Dialogo
 
 u8 randU8(u8,u8);
 
@@ -38,7 +47,15 @@ u16 paleta64[64];
 void TITUTLO();
 void ZoneMap();
 
+<<<<<<< HEAD
 u8 old_musica;
+=======
+
+#define diag_ind 200 //hex:4B0
+void dialogo(u16,u16,u8,u8);
+
+
+>>>>>>> Dialogo
 //-----------------------------------
 typedef struct {
   const bool const PlanA;

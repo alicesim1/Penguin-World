@@ -15,8 +15,7 @@ const MapDefinition* const zona1b[] = {0,&z1h1b,0,&z1h3b};
 Map* bga; //PLANO A (Capa superior Prioridad Alta)
 //-----------------------------------------------------------
 
-bool move_scroll;
-s16 posX,posY;
+u16 posX,posY;
 u16 TopXMap,TopYMap;
 u16 posXt,posYt;
 
@@ -35,18 +34,18 @@ u16 STARTXT;
 //---------------------------------------------------------
 // DATA
 //---------------------------------------------------------
-const u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
+//const u8 jugcontrol=3;//0=diagonales, 1=UP=UP+>>, 2=UP=UP+<<, 3=0+1
 
 //------------------------------------------------------------------------------------------
 
 Sprite* penguinsp; //atributo tipo Sprite
-const u8 VELPING=2;
+bool JUGmueve;
+const u8 const VELPING=2;
 s16 PX,PY;
 u8 PX32,PY32,PX32C,PY32C;//BLOQUES *32
 bool pflag;
 u8 pdirc,pdir,pdircm;
 u8 panim;
-bool JUGmueve;
 bool jugpri,jugpricpy;
 
 static void jug2diso();
@@ -54,72 +53,78 @@ static void jugpenguin();
 
 //------------------------------------------------------------------------------------------
 
-/*#define top_object2D 3
-struct t_object2D {
-	Sprite* sprt;
-	u16 x, y;
-};
-struct t_object2D object2D[top_object2D];
-//------------------------------------------------------------------------------------------
-static void object2D_maker(SpriteDefinition sprited,u8 , u8, u16 , u16 , bool , bool );
-*/
-//--------------------------------------------------------------------------------------------
-
-
-Sprite* cursorsp; //atributo tipo Sprite
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
+	old_musica=0;
 	
+<<<<<<< HEAD
 	old_musica=0;
 	ZONA_NUM=0;
 	
 	//PX=32*1;PY=32*7; // casillas_2 11 x 16
 	PX=32*3;PY=32*3; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
-	
-	//--------------------------------------
-	
-	//VDP_setWindowVPos(1,ScreenY-2);// 27max vertical Windows
-	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
+=======
+	ZONA_NUM=0;
+	PX=PY=32;
+	//PX=32*0;PY=32*0; 
+>>>>>>> Dialogo
 	
 	//----------------------------------------------
 	
 	memcpy(&paleta64[16],penguin.palette->data,8*2);//16+8
-	memcpy(&paleta64[32],&palette_green, 16 * 2);
-	memcpy(&paleta64[48],&palette_blue, 16 * 2);
+	memcpy(&paleta64[32],dig_marco1.palette->data,8*2);//16+8
+	//memcpy(&paleta64[48],&palette_blue, 16 * 2);
 	
 	
 	SPR_init();
+	
+	Sprite* dig_temp[3];
+	dig_temp[0]=SPR_addSpriteEx(&dig_marco1,0,0,diag_ind,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	dig_temp[1]=SPR_addSpriteEx(&dig_marco2,0,0,diag_ind+1,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	dig_temp[2]=SPR_addSpriteEx(&dig_marco3,0,0,diag_ind+1+4,0,SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	
 	
 	JUGmueve=FALSE;
 	panim=3;
 	jugpri=jugpricpy=TRUE;
 	
+<<<<<<< HEAD
 	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-16,TILE_ATTR(1,jugpri,0,0));
+=======
+	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
+	SPR_setVisibility(penguinsp,VISIBLE);
+>>>>>>> Dialogo
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//down+<<
 	//pdirc=pdircm=3;//up+<<
-	
 	switch(pdircm){
 		case 1:{SPR_setAnim(penguinsp,1);pflag=FALSE;}break;
 		case 2:{SPR_setAnim(penguinsp,0);pflag=TRUE;}break;
 		case 3:{SPR_setAnim(penguinsp,1);pflag=TRUE;}break;
 		case 4:{SPR_setAnim(penguinsp,0);pflag=FALSE;}
 	}
-	
 	SPR_setHFlip(penguinsp,pflag);
 	SPR_setFrame(penguinsp,1);//parado
 	
-	bool gat=TRUE;
 	
-	if(padraton==PORT_TYPE_MOUSE){ 
+	if(CursorON){ 
+		cursorsp=SPR_addSpriteEx(&cursor,160,ScreenMY,TILE_ATTR(0,TRUE,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD | SPR_FLAG_INSERT_HEAD);
+		SPR_setVisibility(cursorsp,HIDDEN);
 		_JOYsetXY(160,ScreenMY);
-		cursorsp=SPR_addSprite(&cursor,joypos.x,joypos.y,TILE_ATTR(0,1,0,0));
-		SPR_setDepth(cursorsp,SPR_MIN_DEPTH);
 	}
 	
-	SYS_showFrameLoad(TRUE);
+	SPR_update();
+	
+	for(u8 i=0;i<3;i++)	SPR_releaseSprite(dig_temp[i]);
+	
+	SYS_doVBlankProcess();
+	//--------------------------------------------------
+	
+	//--------------------------------------------------
+	
+	//SYS_showFrameLoad(TRUE);//Sprite 0: prioridad maxima, tile nº: 1534, pal 0
 	
 	PUERTA_SAL=TRUE;
 	
@@ -127,6 +132,7 @@ void ZoneMap(){
 		
 		loadzona();//SYS_doVBlankProcess(); X 4 / 8
 		
+<<<<<<< HEAD
 		/*VDP_drawInt(ZONA_NUM,0,0,ScreenY);
 		if(zona1dat[ZONA_NUM].topPuertas>0){
 			VDP_drawInt(zona1dat[ZONA_NUM].puertas[1],0,0,ScreenY-2);
@@ -139,6 +145,8 @@ void ZoneMap(){
 		KLog_S2("posX:", posX," posY:", posY);
 		KLog("----");*/
 		
+=======
+>>>>>>> Dialogo
 		if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
 			play_music(zona1dat[ZONA_NUM].musica);
@@ -147,52 +155,56 @@ void ZoneMap(){
 		SYS_doVBlankProcess();//Evita sobre carga DMA SPRITES
 		SPR_update();
 		
-		PAL_fadeInAll(paleta64,20,FALSE);//espera el fade
+		PAL_fadeInAll(paleta64,20,FALSE);
 		
+		gat=TRUE;
 		PUERTA_SAL=FALSE;
+		
+		if(CursorON) SPR_setVisibility(cursorsp,VISIBLE);
+		
 		do{
 			
 			jugpenguin();
 			
-			if(!gat){
-				/*if(BUTTONS[7]){ gat=TRUE;
-					
-				}*/
-			}else if(!BUTTONS[0]) gat=FALSE;
-			
-			if(padraton==PORT_TYPE_MOUSE){
-				_JOYupdateMouse();
-				SPR_setPosition(cursorsp,joypos.x,joypos.y);
+			if(PUERTA_SAL){
+				if(CursorON) SPR_setVisibility(cursorsp,HIDDEN);
+				if(!PAL_isDoingFade()) PAL_fadeOutAll(20,TRUE);//transicion fade
+			}else{
+				if(!gat){
+					if(!JUGmueve){
+						if(BUTTONS[6]){ gat=TRUE;
+							dialogo(0,0,2,2);
+						}
+						
+						if(BUTTONS[10]){ gat=TRUE;
+							dialogo(100,100,1,1);
+						}
+						
+						if(BUTTONS[5]){ gat=TRUE;
+							dialogo(160-((16+(32*4))/2),ScreenMY-((16+(32*2))/2),4,2);
+						}
+						
+						if(BUTTONS[7]){ gat=TRUE;
+							dialogo(160-((16+(32*6))/2),ScreenTY-(16+(32*2)),6,2);
+						}
+						
+						if(BUTTONS[9]){ gat=TRUE;
+							dialogo(160-((16+(32*8))/2),ScreenTY-(16+(32*2)),8,1);
+						}
+					}
+				}else if(!BUTTONS[0]) gat=FALSE;
+				
+				
+				if(CursorON){
+					_JOYupdateMouse();
+				}
 			}
-			
 			
 			//VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
 			
-			if(BUTTONS[8] && BUTTONS[5]) SYS_hardReset();
-			
-		}while(!PUERTA_SAL);
-		
-		PAL_fadeOutAll(20,TRUE);//transicion fade
-		do{
-			jugpenguin();
-			
-			SPR_update();
-			SYS_doVBlankProcess(); // Renderizamos la pantalla
-		}while(PAL_isDoingFade());//ya no hay fade
-		
-		
-		/*for(u8 i=0; i<4; i++){
-			SPR_releaseSprite(object2D[i].sprt);
-		}
-		
-		
-		SPR_releaseSprite(object2D[0].sprt);
-		SPR_releaseSprite(object2D[1].sprt);
-		SPR_releaseSprite(object2D[2].sprt);
-		SPR_releaseSprite(object2D[3].sprt);
-		*/
+		}while(!PUERTA_SAL || PAL_isDoingFade());
 		
 		MEM_free(bgb);
 		if(zona1dat[ZONA_NUM].PlanA) MEM_free(bga);
@@ -203,6 +215,53 @@ void ZoneMap(){
     }
 }
 
+static void pintarAB(){	 //ingame al movernos con el jugador
+	MAP_scrollTo(bgb,posX,posY);
+	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
+}
+
+static void pintarfULLAB(){	//para pantallas de carga
+	MAP_scrollTo(bgb,posX,posY);
+	SYS_doVBlankProcess();SYS_doVBlankProcess();
+	if(zona1dat[ZONA_NUM].PlanA){
+		MAP_scrollTo(bga,posX,posY);
+		SYS_doVBlankProcess();SYS_doVBlankProcess();
+	}
+}
+
+static void loadzona(){
+	
+	VDP_clearPlane(BG_B,TRUE);VDP_clearPlane(BG_A,TRUE);
+	//Limpiar el plano especificado (usando DMA).
+	
+	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
+	paleta64[0]=0;//colro de fondo 100% -Negro
+	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
+	
+	//u16 ind=TILE_USERINDEX;
+	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,0,CPU);
+	bgb=MAP_create(zona1[ZONA_NUM],BG_B,0);
+	u16 ind = zona1[ZONA_NUM]->tileset->numTile;
+	
+	if(zona1dat[ZONA_NUM].PlanA){
+		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
+		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));	//PLANO A SIEMPRE PRIORIDAD ALTA!
+		//ind += zona1b[ZONA_NUM]->tileset->numTile;
+	}
+	
+	//Pintado del mapa por completo
+	pintarfULLAB();//pintado completo 1º vez.
+	
+	//8x4=32(la mitad de una casilla isometrica) * casillasY)
+	STARTXT=zona1dat[ZONA_NUM].Ytop*32;
+	jug2diso();
+	
+	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
+	
+	
+	SPR_PRIORITY();
+	
+}
 
 
 static void SPR_PRIORITY(){
@@ -374,6 +433,7 @@ static void jugpenguin(){
 }
 
 
+<<<<<<< HEAD
 static void pintarAB(){	
 	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
 	MAP_scrollTo(bgb,posX,posY);
@@ -419,4 +479,6 @@ static void loadzona(){
 	SPR_PRIORITY();
 		
 }
+=======
+>>>>>>> Dialogo
 
