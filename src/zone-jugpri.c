@@ -57,18 +57,10 @@ static void jugpenguin();
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
 	old_musica=0;
-	
-<<<<<<< HEAD
-	old_musica=0;
 	ZONA_NUM=0;
 	
-	//PX=32*1;PY=32*7; // casillas_2 11 x 16
-	PX=32*3;PY=32*3; //32 = 1x1 (la casilla 0x0 esta vacia siempre)
-=======
-	ZONA_NUM=0;
 	PX=PY=32;
 	//PX=32*0;PY=32*0; 
->>>>>>> Dialogo
 	
 	//----------------------------------------------
 	
@@ -89,12 +81,9 @@ void ZoneMap(){
 	panim=3;
 	jugpri=jugpricpy=TRUE;
 	
-<<<<<<< HEAD
-	penguinsp=SPR_addSprite(&penguin,160-12,ScreenMY-16,TILE_ATTR(1,jugpri,0,0));
-=======
 	penguinsp=SPR_addSpriteEx(&penguin,160-12,ScreenMY-18,TILE_ATTR(1,jugpri,FALSE,FALSE),0,SPR_FLAG_AUTO_VRAM_ALLOC | SPR_FLAG_AUTO_SPRITE_ALLOC | SPR_FLAG_AUTO_TILE_UPLOAD);
 	SPR_setVisibility(penguinsp,VISIBLE);
->>>>>>> Dialogo
+
 	//pdirc=pdircm=1;//up+>>
 	pdirc=pdircm=4;//down+>>
 	//pdirc=pdircm=2;//down+<<
@@ -132,21 +121,6 @@ void ZoneMap(){
 		
 		loadzona();//SYS_doVBlankProcess(); X 4 / 8
 		
-<<<<<<< HEAD
-		/*VDP_drawInt(ZONA_NUM,0,0,ScreenY);
-		if(zona1dat[ZONA_NUM].topPuertas>0){
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[1],0,0,ScreenY-2);
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[0],0,2,ScreenY-2);
-			VDP_drawInt(zona1dat[ZONA_NUM].puertas[2],0,5,ScreenY-2);
-		}*/
-		
-		/*KLog("start");
-		KLog_U2("PX:", PX," PY:", PY);
-		KLog_S2("posX:", posX," posY:", posY);
-		KLog("----");*/
-		
-=======
->>>>>>> Dialogo
 		if(zona1dat[ZONA_NUM].musica!=old_musica){
 			old_musica=zona1dat[ZONA_NUM].musica;
 			play_music(zona1dat[ZONA_NUM].musica);
@@ -254,6 +228,7 @@ static void loadzona(){
 	
 	//8x4=32(la mitad de una casilla isometrica) * casillasY)
 	STARTXT=zona1dat[ZONA_NUM].Ytop*32;
+	STARTXT-=32;//fix SGDK 1.65
 	jug2diso();
 	
 	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
@@ -431,54 +406,4 @@ static void jugpenguin(){
 	}
 	
 }
-
-
-<<<<<<< HEAD
-static void pintarAB(){	
-	//VDP_drawInt(posX,3,5,26);VDP_drawInt(posY,3,5,27);
-	MAP_scrollTo(bgb,posX,posY);
-	if(zona1dat[ZONA_NUM].PlanA) MAP_scrollTo(bga,posX,posY);
-}
-
-static void pintarfULLAB(){	
-	MAP_scrollTo(bgb,posX,posY);
-	SYS_doVBlankProcess();SYS_doVBlankProcess();
-	if(zona1dat[ZONA_NUM].PlanA){
-		MAP_scrollTo(bga,posX,posY);	
-		SYS_doVBlankProcess();SYS_doVBlankProcess();
-	}
-}
-
-static void loadzona(){
-	
-	VDP_clearPlane(BG_B,TRUE);VDP_clearPlane(BG_A,TRUE);
-	//Limpiar el plano especificado (usando DMA).
-	
-	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
-	paleta64[0]=0;//colro de fondo 100% -Negro
-	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
-	
-	VDP_loadTileSet(zona1[ZONA_NUM]->tileset,1,CPU);
-	bgb=MAP_create(zona1[ZONA_NUM],BG_B,1);
-	if(zona1dat[ZONA_NUM].PlanA){ 
-		u8 ind=1+zona1[ZONA_NUM]->tileset->numTile;
-		VDP_loadTileSet(zona1b[ZONA_NUM]->tileset,ind,CPU);
-		bga=MAP_create(zona1b[ZONA_NUM],BG_A,TILE_ATTR_FULL(0,1,0,0,ind));//PLANO A SIEMPRE PRIORIDAD ALTA!
-	}
-
-	//Pintado del mapa por completo
-	
-	pintarfULLAB();//pintado completo 1º vez.
-	
-	//8x4=32(la mitad de una casilla) * casillas) -32(fix sprite ancho)
-	STARTXT=(32*zona1dat[ZONA_NUM].Ytop)-32;
-	jug2diso();
-	
-	pintarfULLAB();//necesaria llamar 2º vez, para actualizar el mapa
-	
-	SPR_PRIORITY();
-		
-}
-=======
->>>>>>> Dialogo
 

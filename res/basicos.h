@@ -2,10 +2,7 @@
 #define _RES_BASICOS_H_
 
 extern const TileSet font1;
-<<<<<<< HEAD
-=======
 extern const TileSet font16;
->>>>>>> Dialogo
 extern const SpriteDefinition penguin;
 extern const SpriteDefinition cursor;
 extern const SpriteDefinition dig_marco1;

@@ -185,14 +185,14 @@ static void SEGALOGO(){
 static void SGDKlogo(){
 	
 	u16 paleta16or[16];
-	memcpy(&paleta16or[0],sgdklogo.palette->data, 16 * 2);
+	memcpy(&paleta16or[0],sgdk_logo.palette->data, 16 * 2);
 	PAL_setPalette(0,palette_black,DMA);
 	
-	VDP_drawImageEx(BG_B,&sgdklogo,1,20-4,14-4+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawBitmapEx(BG_B,&sgdk_logo,1,20-4,14-4+IS_PALSYSTEM,FALSE);
 	PAL_fadeIn(0,15,&paleta16or[0],10,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
-	else PAL_setPalette(PAL0,sgdklogo.palette->data,DMA);
+	else PAL_setPalette(PAL0,sgdk_logo.palette->data,DMA);
 	
 	PAL_fadeOutAll(20,FALSE);
 	VDP_clearPlane(BG_B,TRUE);

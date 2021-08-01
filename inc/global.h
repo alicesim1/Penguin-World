@@ -1,13 +1,9 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
 //------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-#include "../res/basicos.h"//fuente, pinguno jug,
-#include "../res/musica.h"
-=======
 #include "../res/basicos.h"//fuente, pinguno jug, cursor,
 #include "../res/musica.h" //toda coleccion de musicas vgm
->>>>>>> Dialogo
+
 //-----------------------------------------------
 
 u8 ScreenY;		//27/29
@@ -35,10 +31,8 @@ char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);
 
 void play_music(u8);
-<<<<<<< HEAD
-=======
 u8 old_musica;
->>>>>>> Dialogo
+
 
 u8 randU8(u8,u8);
 
@@ -47,15 +41,11 @@ u16 paleta64[64];
 void TITUTLO();
 void ZoneMap();
 
-<<<<<<< HEAD
-u8 old_musica;
-=======
 
 #define diag_ind 200 //hex:4B0
 void dialogo(u16,u16,u8,u8);
 
 
->>>>>>> Dialogo
 //-----------------------------------
 typedef struct {
   const bool const PlanA;
