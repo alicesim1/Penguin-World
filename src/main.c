@@ -23,18 +23,18 @@ void main(u16 hard){
 		VDP_setScreenHeight240();//29(30) tiles x8 (Solo para PAL = 50FPS) NTSC No puede usar este modo!
 		ScreenY=29;
 		ScreTile8=8;
-		}
-	else {	//KLog("NTSC-224");
+	} else {	//KLog("NTSC-224");
 		ScreenY=27;
 		ScreTile8=0;
 	}
+	
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
 	fixAlturaY=-24-ScreTile8;//-24/-32
 	
 	//KLog_U1("ScreenTY:",ScreenTY);
 	//KLog_U1("ScreenMY:",ScreenMY);
-
+	
 	//--------------------------------------
 	JoyType=JOY_getJoypadType(JOY_1);
 	
@@ -47,7 +47,7 @@ void main(u16 hard){
 	JOY_setEventHandler(&inputHandler);
 	
 	TITUTLO();
-
+	
 	//VDP_setWindowVPos(1,ScreenY);// 27max vertical Windows
 	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
 	//PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
