@@ -6,8 +6,8 @@
 #include "../inc/global.h"
 //-----------------------------------------------------
 
-
 s16 readX,readY; //_JOYupdateMouse(); Coordenadas absolutas del puntero raton
+
 
 //Definiciones de las funciones---------------------------------------------------
 static void inputHandler(u16,u16,u16);
@@ -23,34 +23,40 @@ void main(u16 hard){
 		VDP_setScreenHeight240();//29(30) tiles x8 (Solo para PAL = 50FPS) NTSC No puede usar este modo!
 		ScreenY=29;
 		ScreTile8=8;
-		}
-	else {	//KLog("NTSC-224");
+	} else {	//KLog("NTSC-224");
 		ScreenY=27;
 		ScreTile8=0;
-	}
+	}	
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
 	fixAlturaY=-24-ScreTile8;//-24/-32
 	
-	//KLog_U1("ScreenTY:",ScreenTY);
-	//KLog_U1("ScreenMY:",ScreenMY);
-
+	/*strclr(charbim);
+	
+	u16 i=random();
+	KLog_U1("i:",i);
+	decabin(i);
+	KLog(charbim);
+	
+	drawNumberAsHex(i);*/
+	
 	//--------------------------------------
 	JoyType=JOY_getJoypadType(JOY_1);
 	
+	CursorON=FALSE;
 	padraton=JOY_getPortType(PORT_2);
 	if(padraton==PORT_TYPE_MOUSE) JOY_setSupport(PORT_2, JOY_SUPPORT_MOUSE);
-	
-	//CursorON=FALSE;
 	if(padraton==PORT_TYPE_MOUSE || padraton==PORT_TYPE_PAD) CursorON=TRUE; 
+	
 	
 	JOY_setEventHandler(&inputHandler);
 	
 	TITUTLO();
-
-	//VDP_setWindowVPos(1,ScreenY);// 27max vertical Windows
-	//VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
-	//PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
+	
+	VDP_setWindowVPos(1,ScreenY);// 27max vertical Windows
+	VDP_setTextPlane(WINDOW);//Textos "normales SGDK" se pintan en Window es temporal
+	PAL_setColors(0,palette_black,64,CPU);//para iniciacion Debug
+	old_musica=0;
 	
 	ZoneMap();
 	
@@ -87,7 +93,7 @@ void VDP_drawInt(s32 valor,u8 ceros,u8 x, u8 y){
  * */
 void inputHandler(u16 joy, u16 state, u16 changed){
    
-   BUTTONS[0]=changed;
+    BUTTONS[0]=changed;
 	
 	if(joy==JOY_1){	//PORT 1
 		BUTTONS[1]=changed & BUTTON_UP;
@@ -95,9 +101,9 @@ void inputHandler(u16 joy, u16 state, u16 changed){
 		BUTTONS[3]=changed & BUTTON_LEFT;
 		BUTTONS[4]=changed & BUTTON_RIGHT;
 		
-		BUTTONS[5]=changed & BUTTON_A;//Boton Central
-		BUTTONS[6]=changed & BUTTON_B;//Boton Izquiero
-		BUTTONS[7]=changed & BUTTON_C;//Boton Derecho
+		BUTTONS[5]=changed & BUTTON_A;
+		BUTTONS[6]=changed & BUTTON_B;
+		BUTTONS[7]=changed & BUTTON_C;
 	
 		BUTTONS[8]=changed & BUTTON_START;
 		if(JoyType==JOY_TYPE_PAD6){
@@ -168,4 +174,27 @@ void _JOYupdateMouse ()
    
    SPR_setPosition(cursorsp,joypos.x,joypos.y);
 }
+
+
+
+/*
+char charbim[16] = {0};
+char *ptr = charbim;
+
+void decabin (u16 n) {
+	//Sik#7563
+	for (int i = 0; i < 16; i++) {
+		// *ptr++ = (n & 0x8000) ? '1' : '0';
+		*ptr++ = '0' + (n >> 15);
+		n <<= 1;
+	}
+}
+
+void drawNumberAsHex(u16 number) {
+  char buffer[16] = {0};
+  intToHex(number, buffer, 8);
+  KLog(buffer);
+}
+*/
+
 

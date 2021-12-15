@@ -56,7 +56,7 @@ static void jugpenguin();
 
 /////////////////////////////INICIO DE TODO//////////////////////////////////////////////////
 void ZoneMap(){
-	old_musica=0;
+	
 	ZONA_NUM=0;
 	
 	PX=PY=32;
@@ -147,24 +147,18 @@ void ZoneMap(){
 				if(!gat){
 					if(!JUGmueve){
 						if(BUTTONS[6]){ gat=TRUE;
-							dialogo(0,0,2,2);
+							dialogo(0,0,4,6,0);
 						}
-						
-						if(BUTTONS[10]){ gat=TRUE;
-							dialogo(100,100,1,1);
-						}
-						
 						if(BUTTONS[5]){ gat=TRUE;
-							dialogo(160-((16+(32*4))/2),ScreenMY-((16+(32*2))/2),4,2);
+							dialogo(0,0,4,6,1);
 						}
-						
 						if(BUTTONS[7]){ gat=TRUE;
-							dialogo(160-((16+(32*6))/2),ScreenTY-(16+(32*2)),6,2);
+							dialogo(0,0,4,6,2);
+						}
+						if(BUTTONS[8]){ gat=TRUE;
+							dialogo(0,0,4,6,3);
 						}
 						
-						if(BUTTONS[9]){ gat=TRUE;
-							dialogo(160-((16+(32*8))/2),ScreenTY-(16+(32*2)),8,1);
-						}
 					}
 				}else if(!BUTTONS[0]) gat=FALSE;
 				
@@ -174,7 +168,7 @@ void ZoneMap(){
 				}
 			}
 			
-			//VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
+			VDP_drawInt(SYS_getCPULoad(),2,38,ScreenY);
 			SPR_update();
 			SYS_doVBlankProcess(); // Renderizamos la pantalla
 			
@@ -284,7 +278,8 @@ static void jugpenguin(){
 		else if (BUTTONS[4] && !BUTTONS[1] && !BUTTONS[2])pdir=4;
 	}
 	
-	s16 PXC,PYC;
+	s16 PXC=0;
+	s16 PYC=0;
 	
 	if(pdir>0){	
 		if((PX&31)==0 && (PY&31)==0){
@@ -312,8 +307,8 @@ static void jugpenguin(){
 			//VDP_drawInt(zona1dat[ZONA_NUM].casillas[PX32+(PY32*zona1dat[ZONA_NUM].Xtop)],0,20,ScreenY);
 			
 			u8 t;
-			for(u8 i=1;i<=zona1dat[ZONA_NUM].topPuertas;i++){//1,2,3,
-				t=6*(i-1);//0=(0,1,2,3,4,5),1=(6,7,8,9,10,11),2=(12,13,14,15,16,17),
+			for(u8 i=0;i<zona1dat[ZONA_NUM].topPuertas;i++){//1,2,3,
+				t=6*i;//0=(0,1,2,3,4,5),1=(6,7,8,9,10,11),2=(12,13,14,15,16,17),
 				if(PX32==zona1dat[ZONA_NUM].puertas[1+t] && PY32==zona1dat[ZONA_NUM].puertas[t] && pdircm==zona1dat[ZONA_NUM].puertas[2+t]){
 					DestZONA_NUM=zona1dat[ZONA_NUM].puertas[3+t];
 					DestPX32=zona1dat[ZONA_NUM].puertas[5+t];

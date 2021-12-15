@@ -2,7 +2,6 @@
 #define _GLOBAL_H
 //------------------------------------------------------------------------------------------
 #include "../res/basicos.h"//fuente, pinguno jug, cursor,
-#include "../res/musica.h" //toda coleccion de musicas vgm
 
 //-----------------------------------------------
 
@@ -30,6 +29,7 @@ void _JOYupdateMouse ();
 char char_salida[8];
 void VDP_drawInt(s32,u8,u8,u8);
 
+#include "../res/musica.h" //toda coleccion de musicas vgm
 void play_music(u8);
 u8 old_musica;
 
@@ -42,8 +42,8 @@ void TITUTLO();
 void ZoneMap();
 
 
-#define diag_ind 200 //hex:4B0
-void dialogo(u16,u16,u8,u8);
+#define diag_ind 200 //VRAM hex:4B0
+void dialogo(u16,u16,u8,u8,u8);
 
 
 //-----------------------------------
