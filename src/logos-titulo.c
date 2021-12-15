@@ -4,7 +4,7 @@
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
 #include "../inc/global.h"
-#define Version "4/7"
+#define Version "15/12"
 
 //res ficheros
 #include "../res/logos.h"
