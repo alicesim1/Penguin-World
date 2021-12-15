@@ -94,7 +94,7 @@ const u8 const puertas_2[] = {
 };
 
 const u8 const puertas_3[] = {
-	9,0,3,2,9,15,//Puerta [1]
+	9,0,3,2,9,15 //Puerta [1]
 };
 
 

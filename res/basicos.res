@@ -1,5 +1,5 @@
 TILESET font1 "font_1c.png" BEST NONE
-TILESET font16 "font8x16b.png" APLIB NONE
+TILESET font16 "font8x16b-SP.png" APLIB NONE
 SPRITE penguin "pingu1.png" 3 4 APLIB
 SPRITE cursor "cursor.png" 1 1 APLIB
 SPRITE dig_marco1 "DiagBox1.png" 1 1 APLIB
