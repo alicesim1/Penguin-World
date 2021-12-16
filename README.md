@@ -12,7 +12,7 @@ Plataforma: **SEGA Mega Drive/Genesis**
 
 **Sistema de cuadros de dialogos! Primera version Alpha Test**
 ![Test Dialogo](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/testzone1-test-CuadroDiag.jpg)
-
+**Añadido Caracteres Españoles**
 
 
 **+4 Zonas de pruebas** in game , aun en desarrollo:
@@ -39,9 +39,7 @@ Resolucion vertical a 240p para PAL 50Hrz, 224 para NTSC(EEUU/JAP) 60Hrz (Difere
 
 **C = Test dialogo 3**
 
-**X = Test dialogo 4**
-
-**Y = Test dialogo 5**
+**START = Test dialogo 4**
 
 
 **B = Cerrar dialogo
