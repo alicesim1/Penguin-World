@@ -12,6 +12,7 @@ Plataforma: **SEGA Mega Drive/Genesis**
 
 **Sistema de cuadros de dialogos! Primera version Alpha Test**
 ![Test Dialogo](https://raw.githubusercontent.com/alicesim1/Penguin-World/main/screenshot/testzone1-test-CuadroDiag.jpg)
+
 **Añadido Caracteres Españoles**
 
 
