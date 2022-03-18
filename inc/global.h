@@ -9,7 +9,6 @@ u8 ScreenY;		//27/29
 u8 ScreenMY;	//112/120
 u8 ScreenTY;	//224/240
 s8 fixAlturaY;	//-24/-32
-u8 ScreTile8; 	//0/8
 
 u8 JoyType;		//JOY_getJoypadType(JOY_1); //JOY_TYPE_PAD6
 u8 padraton;	//JOY_getPortType(PORT_2);

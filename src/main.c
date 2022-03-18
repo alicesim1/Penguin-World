@@ -19,17 +19,13 @@ void main(u16 hard){
 		KLog("Soft RESET!");
 	}
 	
-	if(IS_PALSYSTEM){	//KLog("PAL-240");
-		VDP_setScreenHeight240();//29(30) tiles x8 (Solo para PAL = 50FPS) NTSC No puede usar este modo!
-		ScreenY=29;
-		ScreTile8=8;
-	} else {	//KLog("NTSC-224");
-		ScreenY=27;
-		ScreTile8=0;
-	}	
+	
+	//KLog("NTSC-224");
+	ScreenY=27;
+	
 	ScreenTY=8+(ScreenY*8);//224/240
 	ScreenMY=ScreenTY/2;//112/120
-	fixAlturaY=-24-ScreTile8;//-24/-32
+	fixAlturaY=-24;//-24/-32
 	
 	/*strclr(charbim);
 	

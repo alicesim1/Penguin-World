@@ -4,6 +4,5 @@
 extern const Image titulo;
 extern const Image titush;
 extern const Image fondogr;
-extern const Image sgdk;
 
 #endif // _RES_TITULO_H_

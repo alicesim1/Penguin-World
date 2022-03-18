@@ -203,7 +203,7 @@ static void loadzona(){
 	//Limpiar el plano especificado (usando DMA).
 	
 	memcpy(&paleta64[0],zona1[ZONA_NUM]->palette->data,16*2);
-	paleta64[0]=0;//colro de fondo 100% -Negro
+	paleta64[0]=0;//color de fondo 100% -Negro
 	paleta64[15]=0xFFF;//color 15 (texo...) Blanco
 	
 	//u16 ind=TILE_USERINDEX;

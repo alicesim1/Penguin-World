@@ -4,7 +4,7 @@
 *      @Author: Alicia Sanchez Martos "AliceSim1"
 ***********************************************************************************/
 #include "../inc/global.h"
-#define Version "15/12"
+#define Version "11/03"
 
 //res ficheros
 #include "../res/logos.h"
@@ -14,7 +14,6 @@
 s16 vectorB[1];
 
 //Definiciones de las funciones---------------------------------------------------
-static void SEGALOGO();
 static void SGDKlogo();
 static void ALICESIM1();
 static void Titulo_scrollLine();
@@ -26,14 +25,13 @@ void TITUTLO(){
 	//--------------------------------------
 	VDP_loadFont(&font1,CPU);
 	
-	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6+IS_PALSYSTEM,TRUE,CPU);
+	VDP_drawImageEx(BG_B,&disclaimer,1,20-10,14-6,TRUE,CPU);
 	JOY_waitPressBtnTime(900);
 	VDP_clearPlane(BG_B,TRUE);
 	
 	SYS_doVBlankProcess();
 	XGM_startPlay(M_titulo);
 	
-	SEGALOGO();
 	if(BUTTONS[0]==0) SGDKlogo();
 	if(BUTTONS[0]==0) ALICESIM1();
 	
@@ -48,11 +46,11 @@ void TITUTLO(){
 	memcpy(&paleta64[48],&palette_red, 16 * 2);
 	
 	//carga la imagen en VRAM y la dibuja en pantalla
-	VDP_drawImageEx(BG_B,&fondogr,TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,1),0,16+(IS_PALSYSTEM*2),FALSE,CPU);
+	VDP_drawImageEx(BG_B,&fondogr,TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,1),0,16,FALSE,CPU);
 	//incrementa ind para 'apuntar' a una zona de VRAM libre para futuras tiles
 	u16 ind=1+fondogr.tileset->numTile;
 	
-	VDP_drawImageEx(BG_A,&titulo,ind,4,1+IS_PALSYSTEM,FALSE,CPU);
+	VDP_drawImageEx(BG_A,&titulo,ind,4,1,FALSE,CPU);
 	ind+=titulo.tileset->numTile;
 	
 	bool gat2=FALSE;
@@ -83,17 +81,14 @@ void TITUTLO(){
 	}
 	PAL_setPalette(2,palette_black,CPU);
 	
-	VDP_drawImageEx(BG_B,&titush,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),3,IS_PALSYSTEM,FALSE,CPU);
-	ind+=titulo.tileset->numTile;
-	
-	VDP_drawImageEx(BG_A,&sgdk,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),31,24+IS_PALSYSTEM,FALSE,CPU);
+	VDP_drawImageEx(BG_B,&titush,TILE_ATTR_FULL(PAL2,FALSE,FALSE,FALSE,ind),3,0,FALSE,CPU);
+	//ind+=titulo.tileset->numTile;
 	
 	VDP_setTextPalette(PAL2);
-	VDP_drawText("Power By",31,23+IS_PALSYSTEM);
-	VDP_drawText(Version,36,0);
+	VDP_drawText(Version,35,0);
 	
-	VDP_setTextPalette(PAL3);VDP_drawText("AliceSim1",9,22+IS_PALSYSTEM);VDP_setTextPalette(PAL0);VDP_drawText("- 2020-2021",19,22+IS_PALSYSTEM);
-	VDP_drawText("Twitter:  @Alice_Sim1",9,24+IS_PALSYSTEM);
+	VDP_setTextPalette(PAL3);VDP_drawText("AliceSim1",9,22);VDP_setTextPalette(PAL0);VDP_drawText("- 2020-2022",19,22);
+	VDP_drawText("Twitter:  @Alice_Sim1",9,24);
 	u8 contador=0;
 	bool gat=FALSE;
 	
@@ -115,23 +110,23 @@ void TITUTLO(){
 		contador++;
 		if(contador==60){ contador=0;
 			if(!gat){
-				VDP_setTextPalette(PAL0);VDP_drawText("PULSA BOTON",11,18+IS_PALSYSTEM);
-				VDP_setTextPalette(PAL3);VDP_drawText("START!",23,18+IS_PALSYSTEM);
+				VDP_setTextPalette(PAL0);VDP_drawText("PULSA BOTON",11,18);
+				VDP_setTextPalette(PAL3);VDP_drawText("START!",23,18);
 			}
-			else VDP_clearText(11,18+IS_PALSYSTEM,18);
+			else VDP_clearText(11,18,18);
 			gat=!gat;
 		}
 		
 		if (gat3){ gat3=FALSE;
 			vectorB[0]=0;
-			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,CPU);
+			VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,1,CPU);
 		}
 		
 		contador2--;
 		if(contador2==0){ contador2=randU8(1,25);
 			vectorB[0]=randU8(0,10)-5;
 			num_lin=randU8(10,112);
-			VDP_setHorizontalScrollLine(BG_A,num_lin+ScreTile8,vectorB,1,CPU);
+			VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,1,CPU);
 			gat3=TRUE;
 		}
 		
@@ -158,29 +153,6 @@ static void Titulo_scrollLine(){
 	for(u8 num_lin=9;num_lin<128;num_lin+=2) VDP_setHorizontalScrollLine(BG_A,num_lin,vectorB,2,DMA);
 }
 
-static void SEGALOGO(){
-	
-	u16 paleta16or[16];
-	memcpy(&paleta16or[0],logosega.palette->data, 16 * 2);
-	PAL_setPalette(0,palette_black,DMA);
-	
-	VDP_drawImageEx(BG_B,&logosega,1,20-6,14-2+IS_PALSYSTEM,FALSE,TRUE);
-	
-	for(u8 i=1;i<13;i++){
-		PAL_fadeIn(i,i,&paleta16or[i],3,TRUE);
-		do{SYS_doVBlankProcess();}while(PAL_isDoingFade() && BUTTONS[0]==0);
-		if(BUTTONS[0]>9)break;
-	}
-	PAL_fadeIn(14,15,&paleta16or[14],15,TRUE);
-	
-	if(BUTTONS[0]==0)JOY_waitPressBtnTime(900);
-	else PAL_setPalette(PAL0,logosega.palette->data,DMA);
-	
-	PAL_fadeOutAll(20,FALSE);
-	VDP_clearPlane(BG_B,TRUE);
-}
-
-
 
 static void SGDKlogo(){
 	
@@ -188,7 +160,7 @@ static void SGDKlogo(){
 	memcpy(&paleta16or[0],sgdk_logo.palette->data, 16 * 2);
 	PAL_setPalette(0,palette_black,DMA);
 	
-	VDP_drawBitmapEx(BG_B,&sgdk_logo,1,20-4,14-4+IS_PALSYSTEM,FALSE);
+	VDP_drawBitmapEx(BG_B,&sgdk_logo,1,20-4,14-4,FALSE);
 	PAL_fadeIn(0,15,&paleta16or[0],10,TRUE);
 	
 	if(BUTTONS[0]==0)JOY_waitPressBtnTime(750);
@@ -210,7 +182,7 @@ static void ALICESIM1(){
 	PAL_setPalette(1,palette_grey,DMA);
 	VDP_setTextPalette(PAL1);
 	
-	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-4+IS_PALSYSTEM,FALSE,TRUE);
+	VDP_drawImageEx(BG_B,&alicesim1,1,20-11,14-4,FALSE,TRUE);
 	//Volvemos a activar las interrupciones del VDP
 	
 	u8 i;
@@ -219,9 +191,9 @@ static void ALICESIM1(){
 		do{SYS_doVBlankProcess();}while(PAL_isDoingFade() && BUTTONS[0]==0);
 		if(BUTTONS[0]>9)break;
 	}
-	VDP_drawText("Alicia Sanchez Martos",10,22+IS_PALSYSTEM);
+	VDP_drawText("Alicia Sanchez Martos",10,22);
 	if(BUTTONS[0]==0){
-		for(i=0;i<16;i+=2){
+		for(i=1;i<16;i+=2){
 			PAL_fade(i,i+1,&paleta16or[i],&colblank[0],1,FALSE);
 			PAL_fade(i,i+1,&colblank[0],&paleta16or[i],3,FALSE);
 			do{SYS_doVBlankProcess();}while(PAL_isDoingFade() && BUTTONS[0]==0);

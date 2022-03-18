@@ -4,10 +4,12 @@ __attribute__((externally_visible))
 const ROMHeader rom_header = {
 #if (ENABLE_BANK_SWITCH != 0)
     "SEGA SSF        ",
+#elif (MODULE_MEGAWIFI != 0)
+    "SEGA MEGAWIFI   ",
 #else
     "SEGA MEGA DRIVE ",
 #endif
-    "ALICESIM1 - 2021",
+    "ALICESIM1 3/2022",
     "PENGUIN WORLD - ALPHA DEVOLOPER                 ",
     "PENGUIN WORLD - ALPHA DEVOLOPER                 ",
     "GM 00000000-00",
@@ -27,5 +29,5 @@ const ROMHeader rom_header = {
     0x0020FFFF,
     "            ",
     "DEMONSTRATION PROGRAM                   ",
-    "EUJ             "
+    "JUE             "
 };
